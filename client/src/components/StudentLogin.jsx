@@ -34,6 +34,7 @@ const StudentLogin = () => {
       localStorage.setItem(
         "studentData",
         JSON.stringify({
+          _id: response.data.student._id, // ✅ include this
           studentID: response.data.student.studentID,
           name: response.data.student.name,
           email: response.data.student.email,
