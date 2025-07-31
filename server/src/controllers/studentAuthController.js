@@ -32,7 +32,7 @@ export const loginStudent = [
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
-      const isMatch = await bcrypt.compare(password, student.password);
+      const isMatch = await student.comparePassword(password);
       if (!isMatch) {
         return res.status(401).json({ message: "Invalid email or password" });
       }

@@ -1,18 +1,26 @@
 import mongoose from "mongoose";
-import Attendance from "./models/Attendance.js";
-import Books from "./models/Books.js";
-import Coaches from "./models/Coaches.js";
-import Course from "./models/Course.js";
-import Library from "./models/Library.js";
-import Modules from "./models/Modules.js";
-import Results from "./models/Results.js";
-import Sports from "./models/Sports.js";
-import Students from "./models/Students.js";
+import dotenv from "dotenv";
+import Admin from "./src/models/Admin.js";
+import Students from "./src/models/Students.js";
+import Course from "./src/models/Course.js";
+import Sports from "./src/models/Sports.js";
+import Books from "./src/models/Books.js";
+import Attendance from "./src/models/Attendance.js";
+import Results from "./src/models/Results.js";
+import Coaches from "./src/models/Coaches.js";
+import Modules from "./src/models/Modules.js";
+import Library from "./src/models/Library.js";
 
-async function insertData() {
+dotenv.config();
+
+async function seedDatabase() {
   try {
     // Connect to MongoDB
-    await mongoose.connect("mongodb://localhost:27017/OnlineSchool");
+    await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost:27017/OnlineSchool", {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log("✅ Connected to MongoDB");
 
     // Clear old data
@@ -26,8 +34,32 @@ async function insertData() {
       Results.deleteMany({}),
       Sports.deleteMany({}),
       Students.deleteMany({}),
+      Admin.deleteMany({}),
     ]);
-    console.log("✅ Old Истина Old data cleared");
+    console.log("✅ Old data cleared");
+
+    // Insert Admins
+    const admins = await Admin.create([
+      {
+        adminID: "A12345678",
+        name: "Admin User",
+        email: "admin@school.com",
+        password: "admin123",
+        contact: "+12345678900",
+        role: "super_admin",
+        status: "active",
+      },
+      {
+        adminID: "A12345679",
+        name: "Moderator User",
+        email: "moderator@school.com",
+        password: "moderator123",
+        contact: "+12345678901",
+        role: "moderator",
+        status: "active",
+      },
+    ]);
+    console.log("✅ Admins created");
 
     // Insert Students
     const students = await Students.create([
@@ -49,6 +81,7 @@ async function insertData() {
         contact: "+12345678902",
         birth: new Date("2001-03-12"),
         gender: "female",
+        status: "active",
       },
       {
         studentID: "S12345680",
@@ -58,11 +91,10 @@ async function insertData() {
         contact: "+12345678903",
         birth: new Date("1999-07-20"),
         gender: "other",
+        status: "active",
       },
     ]);
-    const studentMap = Object.fromEntries(
-      students.map((s) => [s.name, s._id])
-    );
+    console.log("✅ Students created");
 
     // Insert Coaches
     const coaches = await Coaches.create([
@@ -83,9 +115,7 @@ async function insertData() {
         status: "active",
       },
     ]);
-    const coachMap = Object.fromEntries(
-      coaches.map((c) => [c.name, c._id])
-    );
+    console.log("✅ Coaches created");
 
     // Insert Books
     const books = await Books.create([
@@ -117,9 +147,7 @@ async function insertData() {
         category: "fiction",
       },
     ]);
-    const bookMap = Object.fromEntries(
-      books.map((b) => [b.title, b._id])
-    );
+    console.log("✅ Books created");
 
     // Insert Modules
     const modules = await Modules.create([
@@ -128,143 +156,132 @@ async function insertData() {
         moduleName: "Introduction to Computer Science",
         description: "Basic concepts of computer science and programming.",
         credits: 3,
-        instructor: coachMap["Michael Smith"],
+        instructor: coaches[0]._id,
       },
       {
         moduleID: "MOD102",
         moduleName: "Advanced Mathematics",
         description: "In-depth study of calculus and linear algebra.",
         credits: 4,
-        instructor: coachMap["Sarah Johnson"],
+        instructor: coaches[1]._id,
       },
     ]);
-    const moduleMap = Object.fromEntries(
-      modules.map((m) => [m.moduleName, m._id])
-    );
+    console.log("✅ Modules created");
 
     // Insert Courses
     const courses = await Course.create([
       {
         courseID: "CS101",
         courseName: "Computer Science Fundamentals",
-        description: "Introduction to programming and computer science concepts.",
-        duration: 12,
-        modules: [moduleMap["Introduction to Computer Science"]],
+        description: "Introduction to computer science concepts",
+        credits: 3,
+        instructor: coaches[0]._id,
+        students: [students[0]._id, students[1]._id],
       },
       {
         courseID: "MATH101",
         courseName: "Calculus I",
-        description: "Fundamentals of calculus and its applications.",
-        duration: 12,
-        modules: [moduleMap["Advanced Mathematics"]],
+        description: "Introduction to calculus",
+        credits: 4,
+        instructor: coaches[1]._id,
+        students: [students[1]._id, students[2]._id],
       },
     ]);
-    const courseMap = Object.fromEntries(
-      courses.map((c) => [c.courseName, c._id])
-    );
-
-    // Update Students with Courses
-    await Students.updateMany(
-      {},
-      {
-        $set: {
-          courses: [
-            courseMap["Computer Science Fundamentals"],
-            courseMap["Calculus I"],
-          ],
-        },
-      }
-    );
+    console.log("✅ Courses created");
 
     // Insert Sports
     const sports = await Sports.create([
       {
         sportName: "Basketball",
-        coach: coachMap["Michael Smith"],
-        captain: studentMap["John Brown"],
-        participants: [
-          studentMap["John Brown"],
-          studentMap["Sarah Lee"],
-          studentMap["Alex Kim"],
-        ],
+        coach: coaches[0]._id,
+        captain: students[0]._id,
+        participants: [students[0]._id, students[1]._id, students[2]._id],
       },
       {
         sportName: "Soccer",
-        coach: coachMap["Sarah Johnson"],
-        captain: studentMap["Sarah Lee"],
-        participants: [studentMap["Sarah Lee"], studentMap["Alex Kim"]],
+        coach: coaches[1]._id,
+        captain: students[1]._id,
+        participants: [students[1]._id, students[2]._id],
       },
     ]);
+    console.log("✅ Sports created");
 
     // Insert Attendance
     await Attendance.create([
       {
-        student: studentMap["John Brown"],
-        date: new Date("2025-06-21"),
-        present: false,
-      },
-      {
-        student: studentMap["John Brown"],
-        date: new Date("2025-06-22"),
+        student: students[0]._id,
+        date: new Date("2024-01-15"),
         present: true,
       },
       {
-        student: studentMap["Sarah Lee"],
-        date: new Date("2025-06-21"),
+        student: students[0]._id,
+        date: new Date("2024-01-16"),
+        present: false,
+      },
+      {
+        student: students[1]._id,
+        date: new Date("2024-01-15"),
         present: true,
       },
       {
-        student: studentMap["Sarah Lee"],
-        date: new Date("2025-06-22"),
-        present: false,
+        student: students[1]._id,
+        date: new Date("2024-01-16"),
+        present: true,
       },
     ]);
-
-    // Insert Library Records
-    await Library.create([
-      {
-        bookID: bookMap["The Great Gatsby"],
-        bookTitle: "The Great Gatsby",
-        borrowedBy: studentMap["John Brown"],
-        borrowDate: new Date("2025-06-01"),
-        returnDate: new Date("2025-06-15"),
-        status: "returned",
-        fine: 0,
-      },
-      {
-        bookID: bookMap["1984"],
-        bookTitle: "1984",
-        borrowedBy: studentMap["Sarah Lee"],
-        borrowDate: new Date("2025-06-10"),
-        status: "borrowed",
-        fine: 0,
-      },
-    ]);
+    console.log("✅ Attendance created");
 
     // Insert Results
     await Results.create([
       {
-        student: studentMap["John Brown"],
-        module: moduleMap["Introduction to Computer Science"],
+        student: students[0]._id,
+        module: modules[0]._id,
         score: 85,
         grade: "B+",
       },
       {
-        student: studentMap["Sarah Lee"],
-        module: moduleMap["Advanced Mathematics"],
+        student: students[1]._id,
+        module: modules[1]._id,
         score: 92,
         grade: "A",
       },
     ]);
+    console.log("✅ Results created");
 
-    console.log("✅ Data inserted successfully");
+    // Insert Library Records
+    await Library.create([
+      {
+        bookID: books[0]._id,
+        bookTitle: "The Great Gatsby",
+        borrowedBy: students[0]._id,
+        borrowDate: new Date("2024-01-01"),
+        returnDate: new Date("2024-01-15"),
+        status: "returned",
+        fine: 0,
+      },
+      {
+        bookID: books[1]._id,
+        bookTitle: "1984",
+        borrowedBy: students[1]._id,
+        borrowDate: new Date("2024-01-10"),
+        status: "borrowed",
+        fine: 0,
+      },
+    ]);
+    console.log("✅ Library records created");
+
+    console.log("✅ Database seeded successfully!");
+    console.log("\n📋 Login Credentials:");
+    console.log("Admin: admin@school.com / admin123");
+    console.log("Moderator: moderator@school.com / moderator123");
+    console.log("Student: john.brown@example.com / password123");
 
   } catch (error) {
-    console.error("❌ Error inserting data:", error);
+    console.error("❌ Error seeding database:", error);
   } finally {
     await mongoose.disconnect();
     console.log("✅ MongoDB connection closed");
   }
 }
 
-insertData();
+seedDatabase(); 

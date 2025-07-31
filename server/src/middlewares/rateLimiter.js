@@ -1,18 +1,36 @@
-import ratelimit from "../config/upstash.js"
+import ratelimit from "../config/upstash.js";
 
 const rateLimiter = async (req, res, next) => {
+    // Skip rate limiting if not configured
+    if (!ratelimit) {
+        return next();
+    }
+
     try {
-        const {success} = await ratelimit.limit("my-limit-key");
-        if(!success){
+        // Use IP address or user ID for rate limiting
+        const identifier = req.ip || req.headers['x-forwarded-for'] || 'unknown';
+        const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
+        
+        if (!success) {
             return res.status(429).json({
-               message: "too may request, please try again later" 
+                message: "Too many requests, please try again later",
+                retryAfter: reset,
+                limit,
+                remaining: 0
             });
         }
+
+        // Add rate limit headers
+        res.setHeader('X-RateLimit-Limit', limit);
+        res.setHeader('X-RateLimit-Remaining', remaining);
+        res.setHeader('X-RateLimit-Reset', reset);
+
         next();
     } catch (error) {
-        console.log("Rate limit error", error);
-        next(error);
+        console.error("Rate limit error:", error);
+        // Continue without rate limiting if there's an error
+        next();
     }
-} 
+};
 
-export default rateLimiter
+export default rateLimiter;
