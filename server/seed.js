@@ -1,26 +1,29 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import Admin from "./src/models/Admin.js";
-import Students from "./src/models/Students.js";
-import Course from "./src/models/Course.js";
-import Sports from "./src/models/Sports.js";
-import Books from "./src/models/Books.js";
 import Attendance from "./src/models/Attendance.js";
-import Results from "./src/models/Results.js";
+import Books from "./src/models/Books.js";
 import Coaches from "./src/models/Coaches.js";
-import Modules from "./src/models/Modules.js";
+import Course from "./src/models/Course.js";
 import Library from "./src/models/Library.js";
+import Modules from "./src/models/Modules.js";
+import Results from "./src/models/Results.js";
+import Sports from "./src/models/Sports.js";
+import Students from "./src/models/Students.js";
 
 dotenv.config();
 
 async function seedDatabase() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost:27017/OnlineSchool", {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
+    await mongoose.connect(
+      process.env.MONGO_URL || "mongodb://localhost:27017/OnlineSchool",
+      {
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+      }
+    );
     console.log("✅ Connected to MongoDB");
 
     // Clear old data
@@ -174,20 +177,30 @@ async function seedDatabase() {
         courseID: "CS101",
         courseName: "Computer Science Fundamentals",
         description: "Introduction to computer science concepts",
-        credits: 3,
-        instructor: coaches[0]._id,
-        students: [students[0]._id, students[1]._id],
+        duration: 12, // Duration in weeks
+        modules: [modules[0]._id],
       },
       {
         courseID: "MATH101",
         courseName: "Calculus I",
         description: "Introduction to calculus",
-        credits: 4,
-        instructor: coaches[1]._id,
-        students: [students[1]._id, students[2]._id],
+        duration: 16, // Duration in weeks
+        modules: [modules[1]._id],
       },
     ]);
     console.log("✅ Courses created");
+
+    // Update students with their enrolled courses
+    await Students.findByIdAndUpdate(students[0]._id, {
+      $push: { courses: courses[0]._id },
+    });
+    await Students.findByIdAndUpdate(students[1]._id, {
+      $push: { courses: { $each: [courses[0]._id, courses[1]._id] } },
+    });
+    await Students.findByIdAndUpdate(students[2]._id, {
+      $push: { courses: courses[1]._id },
+    });
+    console.log("✅ Students enrolled in courses");
 
     // Insert Sports
     const sports = await Sports.create([
@@ -205,6 +218,18 @@ async function seedDatabase() {
       },
     ]);
     console.log("✅ Sports created");
+
+    // Update students with their sports participation
+    await Students.findByIdAndUpdate(students[0]._id, {
+      $push: { sports: { $each: [sports[0]._id, sports[1]._id] } },
+    });
+    await Students.findByIdAndUpdate(students[1]._id, {
+      $push: { sports: { $each: [sports[0]._id, sports[1]._id] } },
+    });
+    await Students.findByIdAndUpdate(students[2]._id, {
+      $push: { sports: { $each: [sports[0]._id, sports[1]._id] } },
+    });
+    console.log("✅ Students enrolled in sports");
 
     // Insert Attendance
     await Attendance.create([
@@ -275,7 +300,6 @@ async function seedDatabase() {
     console.log("Admin: admin@school.com / admin123");
     console.log("Moderator: moderator@school.com / moderator123");
     console.log("Student: john.brown@example.com / password123");
-
   } catch (error) {
     console.error("❌ Error seeding database:", error);
   } finally {
@@ -284,4 +308,4 @@ async function seedDatabase() {
   }
 }
 
-seedDatabase(); 
+seedDatabase();

@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
 const coachSchema = new mongoose.Schema(
   {
@@ -45,8 +45,7 @@ const coachSchema = new mongoose.Schema(
 );
 
 // Indexes for efficient querying
-coachSchema.index({ coachID: 1 });
-coachSchema.index({ email: 1 });
+// Note: coachID and email already have unique indexes from field definitions
 
 // Hash password before saving
 coachSchema.pre("save", async function (next) {

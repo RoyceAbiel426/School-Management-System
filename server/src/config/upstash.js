@@ -6,19 +6,35 @@ dotenv.config();
 
 let ratelimit = null;
 
+// Skip rate limiting if disabled in environment
+if (process.env.DISABLE_RATE_LIMITING === "true") {
+  console.log("⚠️  Rate limiting is disabled via environment variable");
+}
 // Validate required environment variables
-if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-  console.warn("⚠️  Upstash Redis credentials not found. Rate limiting will be disabled.");
+else if (
+  !process.env.UPSTASH_REDIS_REST_URL ||
+  !process.env.UPSTASH_REDIS_REST_TOKEN
+) {
+  console.warn(
+    "⚠️  Upstash Redis credentials not found. Rate limiting will be disabled."
+  );
 } else {
   try {
+    // Test Redis connection first
+    const redis = Redis.fromEnv();
+
     ratelimit = new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: redis,
       limiter: Ratelimit.slidingWindow(10, "20 s"),
       analytics: true,
-      prefix: "school-management-api"
+      prefix: "school-management-api",
     });
+
+    console.log("✅ Rate limiter initialized successfully");
   } catch (error) {
     console.error("❌ Failed to initialize rate limiter:", error.message);
+    console.warn("⚠️  Continuing without rate limiting...");
+    ratelimit = null;
   }
 }
 

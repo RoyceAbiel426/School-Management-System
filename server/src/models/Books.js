@@ -48,7 +48,6 @@ const bookSchema = new mongoose.Schema(
 );
 
 // Indexes for efficient querying
-bookSchema.index({ isbn: 1 });
 bookSchema.index({ title: 1 });
 
 const Books = mongoose.model("Books", bookSchema);

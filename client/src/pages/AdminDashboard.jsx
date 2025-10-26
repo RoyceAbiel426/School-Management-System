@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { 
-  Users, 
-  BookOpen, 
-  Trophy, 
-  Library, 
-  Calendar, 
-  BarChart3, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  BarChart3,
+  BookOpen,
+  Calendar,
+  Edit,
   Eye,
+  Library,
   LogOut,
+  Plus,
+  Settings,
+  Trash2,
+  Trophy,
   User,
-  Settings
+  Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import api from "../utils/axiosInstance";
 
 const AdminDashboard = () => {
@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     books: [],
     attendance: [],
     results: [],
-    coaches: []
+    coaches: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Get admin token from localStorage
       const token = localStorage.getItem("adminToken");
       if (!token) {
@@ -50,18 +50,40 @@ const AdminDashboard = () => {
 
       // Fetch dashboard overview
       const overviewResponse = await api.get("/admin/dashboard", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       // Fetch all data for different sections
-      const [studentsRes, coursesRes, sportsRes, booksRes, attendanceRes, resultsRes, coachesRes] = await Promise.all([
-        api.get("/admin/students", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/courses", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/sports", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/books", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/attendance", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/results", { headers: { Authorization: `Bearer ${token}` } }),
-        api.get("/admin/coaches", { headers: { Authorization: `Bearer ${token}` } })
+      const [
+        studentsRes,
+        coursesRes,
+        sportsRes,
+        booksRes,
+        attendanceRes,
+        resultsRes,
+        coachesRes,
+      ] = await Promise.all([
+        api.get("/admin/students", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/courses", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/sports", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/books", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/attendance", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/results", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get("/admin/coaches", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       setData({
@@ -71,7 +93,7 @@ const AdminDashboard = () => {
         books: booksRes.data.data || [],
         attendance: attendanceRes.data.data || [],
         results: resultsRes.data.data || [],
-        coaches: coachesRes.data.data || []
+        coaches: coachesRes.data.data || [],
       });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load dashboard data");
@@ -128,7 +150,7 @@ const AdminDashboard = () => {
     { id: "library", name: "Library", icon: Library },
     { id: "attendance", name: "Attendance", icon: Calendar },
     { id: "results", name: "Results", icon: BarChart3 },
-    { id: "coaches", name: "Coaches", icon: User }
+    { id: "coaches", name: "Coaches", icon: User },
   ];
 
   const renderOverview = () => (
@@ -140,7 +162,9 @@ const AdminDashboard = () => {
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Total Students</p>
-            <p className="text-2xl font-bold text-gray-900">{data.students.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {data.students.length}
+            </p>
           </div>
         </div>
       </div>
@@ -152,7 +176,9 @@ const AdminDashboard = () => {
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Active Courses</p>
-            <p className="text-2xl font-bold text-gray-900">{data.courses.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {data.courses.length}
+            </p>
           </div>
         </div>
       </div>
@@ -164,7 +190,9 @@ const AdminDashboard = () => {
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Sports Teams</p>
-            <p className="text-2xl font-bold text-gray-900">{data.sports.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {data.sports.length}
+            </p>
           </div>
         </div>
       </div>
@@ -176,7 +204,9 @@ const AdminDashboard = () => {
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Library Books</p>
-            <p className="text-2xl font-bold text-gray-900">{data.books.length}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {data.books.length}
+            </p>
           </div>
         </div>
       </div>
@@ -187,7 +217,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Students Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Students Management
+          </h2>
           <button
             onClick={() => openModal("add-student")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -201,37 +233,70 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Student ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Courses
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.students.map((student) => (
               <tr key={student._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.studentID}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.course}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {student.studentID}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {student.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {student.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {student.courses?.length || 0} courses
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    student.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      student.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
                     {student.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("view-student", student)} className="text-blue-600 hover:text-blue-900">
+                    <button
+                      onClick={() => openModal("view-student", student)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
                       <Eye className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("edit-student", student)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-student", student)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-student", student)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-student", student)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -248,7 +313,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Courses Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Courses Management
+          </h2>
           <button
             onClick={() => openModal("add-course")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -262,26 +329,50 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instructor</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Course ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Duration
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Modules
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.courses.map((course) => (
               <tr key={course._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{course.code}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{course.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.instructor}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.students}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {course.courseID}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {course.courseName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {course.duration} weeks
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {course.modules?.length || 0} modules
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-course", course)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-course", course)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-course", course)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-course", course)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -298,7 +389,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Sports Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Sports Management
+          </h2>
           <button
             onClick={() => openModal("add-sport")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -312,32 +405,54 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sport</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coach</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Sport
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Coach
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Students
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.sports.map((sport) => (
               <tr key={sport._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{sport.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sport.coach}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sport.students}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {sport.sportName}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {sport.coach?.name || "No Coach"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {sport.participants?.length || 0} participants
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    sport.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {sport.status}
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800`}
+                  >
+                    Active
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-sport", sport)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-sport", sport)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-sport", sport)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-sport", sport)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -354,7 +469,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Library Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Library Management
+          </h2>
           <button
             onClick={() => openModal("add-book")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -368,32 +485,58 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Title
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Author
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ISBN
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.books.map((book) => (
               <tr key={book._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{book.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{book.author}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{book.isbn}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {book.title}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {book.author}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {book.isbn}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    book.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {book.available ? 'Available' : 'Borrowed'}
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      book.availableCopies > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {book.availableCopies}/{book.totalCopies} available
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-book", book)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-book", book)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-book", book)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-book", book)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -410,7 +553,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Attendance Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Attendance Management
+          </h2>
           <button
             onClick={() => openModal("add-attendance")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -424,32 +569,58 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Student
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Student ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.attendance.map((record) => (
               <tr key={record._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{record.student}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.course}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {record.student?.name || "Unknown Student"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(record.date).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {record.student?.studentID || "N/A"}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    record.status === 'Present' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {record.status}
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      record.present
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {record.present ? "Present" : "Absent"}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-attendance", record)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-attendance", record)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-attendance", record)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-attendance", record)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -466,7 +637,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Results Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Results Management
+          </h2>
           <button
             onClick={() => openModal("add-result")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -480,26 +653,50 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Student
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Module
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Grade
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Score
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.results.map((result) => (
               <tr key={result._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{result.student}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.course}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.grade}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.score}%</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {result.student?.name || "Unknown Student"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {result.module?.moduleName || "Unknown Module"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {result.grade}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {result.score}%
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-result", result)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-result", result)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-result", result)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-result", result)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -516,7 +713,9 @@ const AdminDashboard = () => {
     <div className="bg-white rounded-lg shadow-md">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Coaches Management</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Coaches Management
+          </h2>
           <button
             onClick={() => openModal("add-coach")}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
@@ -530,26 +729,50 @@ const AdminDashboard = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sport</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experience</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Sports
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Contact
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {data.coaches.map((coach) => (
               <tr key={coach._id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{coach.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{coach.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{coach.sport}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{coach.experience}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {coach.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {coach.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {coach.sports?.length || 0} sports
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {coach.contact}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal("edit-coach", coach)} className="text-green-600 hover:text-green-900">
+                    <button
+                      onClick={() => openModal("edit-coach", coach)}
+                      className="text-green-600 hover:text-green-900"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openModal("delete-coach", coach)} className="text-red-600 hover:text-red-900">
+                    <button
+                      onClick={() => openModal("delete-coach", coach)}
+                      className="text-red-600 hover:text-red-900"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -592,13 +815,18 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">School Management System</h1>
+              <h1 className="text-xl font-semibold text-gray-900">
+                School Management System
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
               <button className="text-gray-500 hover:text-gray-700">
                 <Settings className="h-5 w-5" />
               </button>
-              <button onClick={handleLogout} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={handleLogout}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 <LogOut className="h-5 w-5" />
               </button>
             </div>
@@ -631,9 +859,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="space-y-6">
-          {renderContent()}
-        </div>
+        <div className="space-y-6">{renderContent()}</div>
       </div>
 
       {/* Modal */}
@@ -642,13 +868,21 @@ const AdminDashboard = () => {
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3 text-center">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
-                {modalType.includes("add") ? "Add New" : modalType.includes("edit") ? "Edit" : "Delete"} {modalType.split("-")[1]}
+                {modalType.includes("add")
+                  ? "Add New"
+                  : modalType.includes("edit")
+                  ? "Edit"
+                  : "Delete"}{" "}
+                {modalType.split("-")[1]}
               </h3>
               <p className="text-sm text-gray-500 mb-4">
-                {modalType.includes("delete") 
-                  ? `Are you sure you want to delete this ${modalType.split("-")[1]}?`
-                  : `Please fill in the details for the ${modalType.split("-")[1]}.`
-                }
+                {modalType.includes("delete")
+                  ? `Are you sure you want to delete this ${
+                      modalType.split("-")[1]
+                    }?`
+                  : `Please fill in the details for the ${
+                      modalType.split("-")[1]
+                    }.`}
               </p>
               <div className="flex justify-end space-x-3">
                 <button
@@ -660,7 +894,7 @@ const AdminDashboard = () => {
                 <button
                   onClick={closeModal}
                   className={`px-4 py-2 rounded-md ${
-                    modalType.includes("delete") 
+                    modalType.includes("delete")
                       ? "bg-red-600 text-white hover:bg-red-700"
                       : "bg-blue-600 text-white hover:bg-blue-700"
                   }`}
