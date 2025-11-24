@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import api from "../utils/axiosInstance"; // Custom Axios instance
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/axiosInstance"; // Custom Axios instance
 
 const StudentRegister = () => {
   const {
@@ -25,7 +25,7 @@ const StudentRegister = () => {
     setSuccess("");
 
     try {
-      const response = await api.post("/auth/register", {
+      const response = await api.post("/auth/student/register", {
         name: data.name,
         email: data.email,
         password: data.password,
@@ -138,7 +138,9 @@ const StudentRegister = () => {
               aria-invalid={errors.email ? "true" : "false"}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
@@ -253,7 +255,9 @@ const StudentRegister = () => {
               aria-invalid={errors.birth ? "true" : "false"}
             />
             {errors.birth && (
-              <p className="mt-1 text-sm text-red-600">{errors.birth.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.birth.message}
+              </p>
             )}
           </div>
 
@@ -283,7 +287,9 @@ const StudentRegister = () => {
               <option value="other">Other</option>
             </select>
             {errors.gender && (
-              <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.gender.message}
+              </p>
             )}
           </div>
 

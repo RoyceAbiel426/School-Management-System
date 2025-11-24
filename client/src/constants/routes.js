@@ -10,6 +10,7 @@ export const ROUTES = {
 
   // Auth routes
   ADMIN_LOGIN: "/admin/login",
+  ADMIN_REGISTER: "/admin/register",
   STUDENT_LOGIN: "/student/login",
   TEACHER_LOGIN: "/teacher/login",
   COACH_LOGIN: "/coach/login",

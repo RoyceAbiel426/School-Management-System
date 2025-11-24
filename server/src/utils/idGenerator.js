@@ -35,16 +35,16 @@ export const generateSchoolID = async (schoolType) => {
   }
 
   // Find the highest school ID number
-  const lastSchool = await Admin.findOne({ schoolName: { $exists: true } })
-    .sort({ createdAt: -1 })
-    .select("adminID")
+  const lastSchool = await Admin.findOne({ schoolID: { $exists: true } })
+    .sort({ schoolID: -1 })
+    .select("schoolID")
     .lean();
 
   let nextNumber = 1;
 
-  if (lastSchool?.adminID) {
+  if (lastSchool?.schoolID) {
     // Extract number from previous school ID (e.g., 'sch_010m' -> 10)
-    const match = lastSchool.adminID.match(/^sch_(\d{3})[bgm]$/);
+    const match = lastSchool.schoolID.match(/^sch_(\d{3})[bgm]$/);
     if (match) {
       nextNumber = parseInt(match[1], 10) + 1;
     }

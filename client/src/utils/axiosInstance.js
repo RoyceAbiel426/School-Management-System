@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: "http://localhost:5000/api/v1",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -14,13 +14,13 @@ API.interceptors.request.use(
     // Try to get admin token first, then student token
     const adminToken = localStorage.getItem("adminToken");
     const studentToken = localStorage.getItem("studentToken");
-    
+
     if (adminToken) {
       config.headers.Authorization = `Bearer ${adminToken}`;
     } else if (studentToken) {
       config.headers.Authorization = `Bearer ${studentToken}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -40,16 +40,16 @@ API.interceptors.response.use(
       localStorage.removeItem("adminData");
       localStorage.removeItem("studentToken");
       localStorage.removeItem("studentData");
-      
+
       // Redirect to appropriate login page
       const currentPath = window.location.pathname;
-      if (currentPath.includes('admin')) {
-        window.location.href = '/admin-login';
+      if (currentPath.includes("admin")) {
+        window.location.href = "/admin/login";
       } else {
-        window.location.href = '/login';
+        window.location.href = "/login";
       }
     }
-    
+
     return Promise.reject(error);
   }
 );

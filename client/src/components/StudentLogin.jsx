@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import api from "../utils/axiosInstance"; // Import custom Axios instance
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
+import api from "../utils/axiosInstance"; // Import custom Axios instance
 
 const StudentLogin = () => {
   const {
@@ -15,6 +16,7 @@ const StudentLogin = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuthContext();
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -22,31 +24,29 @@ const StudentLogin = () => {
     setSuccess("");
 
     try {
-      const response = await api.post("/auth/login", {
+      const response = await api.post("/auth/student/login", {
         email: data.email,
         password: data.password,
       });
 
       setSuccess("Login successful!");
 
-      // Store token and minimal student data in localStorage
-      localStorage.setItem("studentToken", response.data.token);
-      localStorage.setItem(
-        "studentData",
-        JSON.stringify({
-          _id: response.data.student._id, // ✅ include this
-          studentID: response.data.student.studentID,
-          name: response.data.student.name,
-          email: response.data.student.email,
-        })
-      );
+      // Use AuthContext to properly register the login
+      const studentData = {
+        _id: response.data.student._id,
+        studentID: response.data.student.studentID,
+        name: response.data.student.name,
+        email: response.data.student.email,
+      };
+
+      login(studentData, "student", response.data.token);
 
       // Reset form
       reset();
 
       // Redirect after a short delay
       setTimeout(() => {
-        navigate("/student-dashboard");
+        navigate("/student/dashboard");
       }, 1000);
 
       console.log("Student logged in:", response.data);

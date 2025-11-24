@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         const userRole = getUserRole();
         setUser(currentUser);
         setRole(userRole);
+        setIsAuthenticated(true);
       }
     } catch (error) {
       console.error("Error initializing auth:", error);
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, userRole, token) => {
     setUser(userData);
     setRole(userRole);
+    setIsAuthenticated(true);
 
     // Store in localStorage
     if (userRole === "admin") {
@@ -64,6 +67,7 @@ export const AuthProvider = ({ children }) => {
     authLogout();
     setUser(null);
     setRole(null);
+    setIsAuthenticated(false);
     navigate(ROUTES.HOME);
   };
 
@@ -81,8 +85,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("coachData", JSON.stringify(userData));
     }
   };
-
-  const isAuthenticated = checkAuth();
 
   const value = {
     user,

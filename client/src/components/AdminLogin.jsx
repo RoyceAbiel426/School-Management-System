@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/routes";
+import { useAuthContext } from "../context/AuthContext";
 import api from "../utils/axiosInstance";
 
 const AdminLogin = () => {
@@ -12,6 +14,7 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuthContext();
 
   const handleChange = (e) => {
     setFormData({
@@ -26,12 +29,12 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const response = await api.post("/admin/login", formData);
-      
+      const response = await api.post("/auth/admin/login", formData);
+
       if (response.data.success) {
-        localStorage.setItem("adminToken", response.data.token);
-        localStorage.setItem("adminData", JSON.stringify(response.data.admin));
-        navigate("/admin-dashboard");
+        // Use AuthContext to properly register the login
+        login(response.data.admin, "admin", response.data.token);
+        navigate("/admin/dashboard");
       }
     } catch (err) {
       setError(
@@ -133,13 +136,19 @@ const AdminLogin = () => {
             </button>
           </div>
 
-          <div className="text-center">
-            <a
-              href="/login"
+          <div className="flex items-center justify-between text-center text-sm">
+            <Link
+              to={ROUTES.LOGIN}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Student Login
-            </a>
+            </Link>
+            <Link
+              to={ROUTES.ADMIN_REGISTER}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
+              Register as Admin
+            </Link>
           </div>
         </form>
       </div>
@@ -147,4 +156,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin; 
+export default AdminLogin;

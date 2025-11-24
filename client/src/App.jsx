@@ -10,6 +10,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 // Lazy load pages for better performance
 const LandingPage = React.lazy(() => import("./components/LandingPage"));
 const AdminLogin = React.lazy(() => import("./components/AdminLogin"));
+const AdminRegister = React.lazy(() => import("./components/AdminRegister"));
 const StudentLogin = React.lazy(() => import("./components/StudentLogin"));
 const StudentRegister = React.lazy(() =>
   import("./components/StudentRegister")
@@ -154,6 +155,10 @@ function App() {
                 <Route path={ROUTES.HOME} element={<LandingPage />} />
                 <Route path={ROUTES.LOGIN} element={<StudentLogin />} />
                 <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
+                <Route
+                  path={ROUTES.ADMIN_REGISTER}
+                  element={<AdminRegister />}
+                />
                 <Route path={ROUTES.REGISTER} element={<StudentRegister />} />
 
                 {/* Admin Routes */}
