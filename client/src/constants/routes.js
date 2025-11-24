@@ -41,6 +41,19 @@ export const ROUTES = {
   ADMIN_TEACHERS: "/admin/teachers",
   ADMIN_COACHES: "/admin/coaches",
 
+  // Admin route shortcuts (for nested routes)
+  ADMIN_ROUTES: {
+    STUDENTS: "/admin/students",
+    TEACHERS: "/admin/teachers",
+    COURSES: "/admin/courses",
+    SPORTS: "/admin/sports",
+    LIBRARY: "/admin/library",
+    ATTENDANCE: "/admin/attendance",
+    RESULTS: "/admin/results",
+    NOTICES: "/admin/notices",
+    COMPLAINTS: "/admin/complaints",
+  },
+
   // Student routes
   STUDENT_DASHBOARD: "/student/dashboard",
   STUDENT_PROFILE: "/student/profile",
