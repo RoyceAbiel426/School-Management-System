@@ -1,8 +1,8 @@
-import Students from "../models/Students.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
-import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
+import Admin from "../models/Admin.js";
+import Student from "../models/Student.js";
+import { generateStudentID } from "../utils/idGenerator.js";
 
 // =====================
 // Login Student
@@ -27,7 +27,7 @@ export const loginStudent = [
     try {
       const { email, password } = req.body;
 
-      const student = await Students.findOne({ email: email.toLowerCase() });
+      const student = await Student.findOne({ email: email.toLowerCase() });
       if (!student) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
@@ -67,6 +67,16 @@ export const registerStudent = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
+  body("schoolID")
+    .notEmpty()
+    .withMessage("School ID is required")
+    .matches(/^sch_\d{3}[bgm]$/)
+    .withMessage("Invalid school ID format"),
+  body("nic")
+    .notEmpty()
+    .withMessage("NIC is required")
+    .matches(/\d{4}/)
+    .withMessage("NIC must contain at least 4 digits"),
   body("contact")
     .matches(/^\+?\d{10,15}$/)
     .withMessage("Valid contact number is required"),
@@ -87,22 +97,32 @@ export const registerStudent = [
     }
 
     try {
-      const { name, email, password, contact, birth, gender } = req.body;
+      const { name, email, password, schoolID, nic, contact, birth, gender } =
+        req.body;
 
-      const existingStudent = await Students.findOne({
+      // Verify school exists
+      const school = await Admin.findOne({ adminID: schoolID });
+      if (!school) {
+        return res.status(404).json({ message: "School not found" });
+      }
+
+      const existingStudent = await Student.findOne({
         email: email.toLowerCase(),
       });
       if (existingStudent) {
         return res.status(400).json({ message: "Email already exists" });
       }
 
-      const studentID = `S${uuidv4().slice(0, 8).toUpperCase()}`;
+      // Generate student ID: st + schoolLast4 + NIC_last4
+      const studentID = generateStudentID(schoolID, nic);
 
-      const student = new Students({
+      const student = new Student({
         studentID,
         name,
         email: email.toLowerCase(),
         password, // Schema's pre-save hook will hash it
+        schoolID,
+        nic,
         contact,
         birth: birth || new Date("2000-01-01"),
         gender: gender || "other",

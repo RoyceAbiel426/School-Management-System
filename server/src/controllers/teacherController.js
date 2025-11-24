@@ -1,7 +1,9 @@
 import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
+import Admin from "../models/Admin.js";
 import Course from "../models/Course.js";
 import Teacher from "../models/Teacher.js";
+import { generateTeacherID } from "../utils/idGenerator.js";
 
 // =====================
 // Teacher Registration (Admin only)
@@ -15,7 +17,16 @@ export const teacherRegister = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
-  body("school").notEmpty().withMessage("School ID is required"),
+  body("school")
+    .notEmpty()
+    .withMessage("School ID is required")
+    .matches(/^sch_\d{3}[bgm]$/)
+    .withMessage("Invalid school ID format"),
+  body("nic")
+    .notEmpty()
+    .withMessage("NIC is required")
+    .matches(/\d{4}/)
+    .withMessage("NIC must contain at least 4 digits"),
   body("teachSclass").optional(),
 
   async (req, res) => {
@@ -25,8 +36,14 @@ export const teacherRegister = [
     }
 
     try {
-      const { name, email, password, school, teachSubject, teachSclass } =
+      const { name, email, password, school, nic, teachSubject, teachSclass } =
         req.body;
+
+      // Verify school exists
+      const schoolExists = await Admin.findOne({ adminID: school });
+      if (!schoolExists) {
+        return res.status(404).json({ message: "School not found" });
+      }
 
       const existingTeacher = await Teacher.findOne({
         email: email.toLowerCase(),
@@ -36,12 +53,17 @@ export const teacherRegister = [
         return res.status(400).json({ message: "Email already exists" });
       }
 
+      // Generate teacher ID: te + schoolLast4 + NIC_last4
+      const teacherID = generateTeacherID(school, nic);
+
       const teacher = new Teacher({
+        teacherID,
         name,
         email: email.toLowerCase(),
         password, // Will be hashed by pre-save hook
         role: "Teacher",
         school,
+        nic,
         teachSubject,
         teachSclass,
       });

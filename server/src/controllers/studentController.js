@@ -1,8 +1,9 @@
 import Attendance from "../models/Attendance.js";
-import Library from "../models/Library.js";
-import Results from "../models/Results.js";
-import Sports from "../models/Sports.js";
-import Students from "../models/Students.js";
+import Course from "../models/Course.js";
+import LibraryTransaction from "../models/LibraryTransaction.js";
+import Result from "../models/Result.js";
+import Sport from "../models/Sport.js";
+import Student from "../models/Student.js";
 
 import { body, validationResult } from "express-validator";
 
@@ -14,7 +15,7 @@ import { body, validationResult } from "express-validator";
 export const getStudentDashboardData = async (req, res) => {
   try {
     // Fetch student with populated courses and sports
-    const student = await Students.findById(req.params.id)
+    const student = await Student.findById(req.params.id)
       .select("studentID name email contact birth gender status courses sports")
       .populate({
         path: "courses",
@@ -40,7 +41,7 @@ export const getStudentDashboardData = async (req, res) => {
       .limit(10);
 
     // Fetch library records with populated book details
-    const library = await Library.find({ borrowedBy: req.params.id })
+    const library = await LibraryTransaction.find({ borrowedBy: req.params.id })
       .select("bookID bookTitle borrowDate returnDate status fine")
       .populate({
         path: "bookID",
@@ -48,7 +49,7 @@ export const getStudentDashboardData = async (req, res) => {
       });
 
     // Fetch results with populated module details
-    const results = await Results.find({ student: req.params.id })
+    const results = await Result.find({ student: req.params.id })
       .select("module score grade")
       .populate({
         path: "module",
@@ -117,7 +118,7 @@ export const getStudentDashboardData = async (req, res) => {
 // =====================
 export const getProfile = async (req, res) => {
   try {
-    const student = await Students.findById(req.user.id)
+    const student = await Student.findById(req.user.id)
       .select("-password")
       .populate("courses", "courseID courseName")
       .populate("sports", "sportName");
@@ -165,7 +166,7 @@ export const updateProfile = [
       if (birth) updates.birth = birth;
       if (gender) updates.gender = gender;
 
-      const student = await Students.findByIdAndUpdate(
+      const student = await Student.findByIdAndUpdate(
         req.user.id,
         { $set: updates },
         { new: true, runValidators: true }
@@ -241,12 +242,12 @@ export const joinSport = [
 
     try {
       const { sportName } = req.body;
-      const sport = await Sports.findOne({ sportName });
+      const sport = await Sport.findOne({ sportName });
       if (!sport) {
         return res.status(404).json({ message: "Sport not found" });
       }
 
-      const student = await Students.findById(req.user.id);
+      const student = await Student.findById(req.user.id);
       if (!student) {
         return res.status(404).json({ message: "Student not found" });
       }
@@ -326,13 +327,13 @@ export const getResults = async (req, res) => {
     const filter = { student: req.user.id };
 
     // Find student to get their classGroup and then grade
-    const student = await Students.findById(req.user.id).populate("classGroup");
+    const student = await Student.findById(req.user.id).populate("classGroup");
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
     // Get results with populated exam and module details
-    const results = await Results.find(filter)
+    const results = await Result.find(filter)
       .populate({
         path: "exam",
         select: "examID examName examType grade course module totalMarks",

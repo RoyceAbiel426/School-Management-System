@@ -3,6 +3,12 @@ import mongoose from "mongoose";
 
 const teacherSchema = new mongoose.Schema(
   {
+    teacherID: {
+      type: String,
+      required: true,
+      unique: true,
+      match: /^te\d{3}[bgm]\d{4}$/, // Format: te010m1102
+    },
     name: {
       type: String,
       required: true,
@@ -17,14 +23,18 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    nic: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
       default: "Teacher",
     },
     school: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
+      type: String,
       required: true,
+      match: /^sch_\d{3}[bgm]$/, // Format: sch_010m
     },
     teachSubject: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,7 +43,6 @@ const teacherSchema = new mongoose.Schema(
     teachSclass: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ClassGroup", // Mapping sclass to ClassGroup
-      required: true,
     },
     attendance: [
       {

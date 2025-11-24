@@ -6,18 +6,19 @@ import {
   registerStudent,
 } from "../controllers/studentAuthController.js";
 import { teacherLogin } from "../controllers/teacherController.js";
+import { strictRateLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
-// Student Authentication
-router.post("/student/login", loginStudent);
-router.post("/student/register", registerStudent);
+// Student Authentication (with strict rate limiting)
+router.post("/student/login", strictRateLimiter, loginStudent);
+router.post("/student/register", strictRateLimiter, registerStudent);
 
-// Admin Authentication
-router.post("/admin/register", registerAdmin);
-router.post("/admin/login", adminLogin);
+// Admin Authentication (with strict rate limiting)
+router.post("/admin/register", strictRateLimiter, registerAdmin);
+router.post("/admin/login", strictRateLimiter, adminLogin);
 
-// Teacher Authentication
-router.post("/teacher/login", teacherLogin);
+// Teacher Authentication (with strict rate limiting)
+router.post("/teacher/login", strictRateLimiter, teacherLogin);
 
 export default router;

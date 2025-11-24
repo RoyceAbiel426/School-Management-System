@@ -2,12 +2,13 @@ import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
 import Attendance from "../models/Attendance.js";
-import Books from "../models/Books.js";
-import Coaches from "../models/Coaches.js";
+import Book from "../models/Book.js";
+import Coach from "../models/Coach.js";
 import Course from "../models/Course.js";
-import Results from "../models/Results.js";
-import Sports from "../models/Sports.js";
-import Students from "../models/Students.js";
+import Result from "../models/Result.js";
+import Sport from "../models/Sport.js";
+import Student from "../models/Student.js";
+import { generateSchoolID } from "../utils/idGenerator.js";
 
 // Admin Authentication
 export const adminLogin = async (req, res) => {
@@ -75,16 +76,16 @@ export const getDashboardOverview = async (req, res) => {
       recentAttendance,
       recentResults,
     ] = await Promise.all([
-      Students.countDocuments({ status: "active" }),
+      Student.countDocuments({ status: "active" }),
       Course.countDocuments(),
-      Sports.countDocuments(),
-      Books.countDocuments(),
-      Coaches.countDocuments({ status: "active" }),
+      Sport.countDocuments(),
+      Book.countDocuments(),
+      Coach.countDocuments({ status: "active" }),
       Attendance.find()
         .sort({ date: -1 })
         .limit(10)
         .populate("student", "name"),
-      Results.find()
+      Result.find()
         .sort({ createdAt: -1 })
         .limit(10)
         .populate("student", "name")
@@ -126,14 +127,14 @@ export const getAllStudents = async (req, res) => {
       query.status = status;
     }
 
-    const students = await Students.find(query)
+    const students = await Student.find(query)
       .populate("courses", "name code")
       .populate("sports", "sportName")
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ createdAt: -1 });
 
-    const total = await Students.countDocuments(query);
+    const total = await Student.countDocuments(query);
 
     res.json({
       success: true,
@@ -152,7 +153,7 @@ export const getAllStudents = async (req, res) => {
 
 export const getStudentById = async (req, res) => {
   try {
-    const student = await Students.findById(req.params.id)
+    const student = await Student.findById(req.params.id)
       .populate("courses", "name code instructor")
       .populate("sports", "sportName coach");
 
@@ -172,7 +173,7 @@ export const createStudent = async (req, res) => {
     const studentData = req.body;
 
     // Check if studentID or email already exists
-    const existingStudent = await Students.findOne({
+    const existingStudent = await Student.findOne({
       $or: [{ studentID: studentData.studentID }, { email: studentData.email }],
     });
 
@@ -182,7 +183,7 @@ export const createStudent = async (req, res) => {
       });
     }
 
-    const student = new Students(studentData);
+    const student = new Student(studentData);
     await student.save();
 
     res.status(201).json({
@@ -204,7 +205,7 @@ export const updateStudent = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    const student = await Students.findByIdAndUpdate(id, updateData, {
+    const student = await Student.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -231,7 +232,7 @@ export const deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const student = await Students.findByIdAndDelete(id);
+    const student = await Student.findByIdAndDelete(id);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
@@ -324,7 +325,7 @@ export const deleteCourse = async (req, res) => {
 // Sports Management
 export const getAllSports = async (req, res) => {
   try {
-    const sports = await Sports.find()
+    const sports = await Sport.find()
       .populate("coach", "name email")
       .populate("captain", "name")
       .populate("participants", "name")
@@ -339,7 +340,7 @@ export const getAllSports = async (req, res) => {
 
 export const createSport = async (req, res) => {
   try {
-    const sport = new Sports(req.body);
+    const sport = new Sport(req.body);
     await sport.save();
 
     res.status(201).json({
@@ -356,7 +357,7 @@ export const createSport = async (req, res) => {
 export const updateSport = async (req, res) => {
   try {
     const { id } = req.params;
-    const sport = await Sports.findByIdAndUpdate(id, req.body, {
+    const sport = await Sport.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -379,7 +380,7 @@ export const updateSport = async (req, res) => {
 export const deleteSport = async (req, res) => {
   try {
     const { id } = req.params;
-    const sport = await Sports.findByIdAndDelete(id);
+    const sport = await Sport.findByIdAndDelete(id);
 
     if (!sport) {
       return res.status(404).json({ message: "Sport not found" });
@@ -398,7 +399,7 @@ export const deleteSport = async (req, res) => {
 // Library Management
 export const getAllBooks = async (req, res) => {
   try {
-    const books = await Books.find().sort({ createdAt: -1 });
+    const books = await Book.find().sort({ createdAt: -1 });
     res.json({ success: true, data: books });
   } catch (error) {
     console.error("Get all books error:", error);
@@ -408,7 +409,7 @@ export const getAllBooks = async (req, res) => {
 
 export const createBook = async (req, res) => {
   try {
-    const book = new Books(req.body);
+    const book = new Book(req.body);
     await book.save();
 
     res.status(201).json({
@@ -425,7 +426,7 @@ export const createBook = async (req, res) => {
 export const updateBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await Books.findByIdAndUpdate(id, req.body, {
+    const book = await Book.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -448,7 +449,7 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await Books.findByIdAndDelete(id);
+    const book = await Book.findByIdAndDelete(id);
 
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
@@ -549,7 +550,7 @@ export const deleteAttendance = async (req, res) => {
 // Results Management
 export const getAllResults = async (req, res) => {
   try {
-    const results = await Results.find()
+    const results = await Result.find()
       .populate("student", "name studentID")
       .populate("module", "name code")
       .sort({ createdAt: -1 });
@@ -563,7 +564,7 @@ export const getAllResults = async (req, res) => {
 
 export const createResult = async (req, res) => {
   try {
-    const result = new Results(req.body);
+    const result = new Result(req.body);
     await result.save();
 
     res.status(201).json({
@@ -580,7 +581,7 @@ export const createResult = async (req, res) => {
 export const updateResult = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await Results.findByIdAndUpdate(id, req.body, {
+    const result = await Result.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -603,7 +604,7 @@ export const updateResult = async (req, res) => {
 export const deleteResult = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await Results.findByIdAndDelete(id);
+    const result = await Result.findByIdAndDelete(id);
 
     if (!result) {
       return res.status(404).json({ message: "Result not found" });
@@ -622,7 +623,7 @@ export const deleteResult = async (req, res) => {
 // Coaches Management
 export const getAllCoaches = async (req, res) => {
   try {
-    const coaches = await Coaches.find().sort({ createdAt: -1 });
+    const coaches = await Coach.find().sort({ createdAt: -1 });
     res.json({ success: true, data: coaches });
   } catch (error) {
     console.error("Get all coaches error:", error);
@@ -632,7 +633,7 @@ export const getAllCoaches = async (req, res) => {
 
 export const createCoach = async (req, res) => {
   try {
-    const coach = new Coaches(req.body);
+    const coach = new Coach(req.body);
     await coach.save();
 
     res.status(201).json({
@@ -649,7 +650,7 @@ export const createCoach = async (req, res) => {
 export const updateCoach = async (req, res) => {
   try {
     const { id } = req.params;
-    const coach = await Coaches.findByIdAndUpdate(id, req.body, {
+    const coach = await Coach.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -672,7 +673,7 @@ export const updateCoach = async (req, res) => {
 export const deleteCoach = async (req, res) => {
   try {
     const { id } = req.params;
-    const coach = await Coaches.findByIdAndDelete(id);
+    const coach = await Coach.findByIdAndDelete(id);
 
     if (!coach) {
       return res.status(404).json({ message: "Coach not found" });
@@ -720,20 +721,8 @@ export const createSchoolProfile = [
         establishedYear,
       } = req.body;
 
-      // Generate school ID: sch_XXXY (XXX=auto-increment, Y=b/g/m)
-      const lastAdmin = await Admin.findOne().sort({ createdAt: -1 });
-      let schoolCounter = 1;
-      if (lastAdmin && lastAdmin.schoolID) {
-        const lastCounter = parseInt(lastAdmin.schoolID.substring(4, 7));
-        schoolCounter = lastCounter + 1;
-      }
-
-      const typeCode =
-        schoolType === "boys" ? "b" : schoolType === "girls" ? "g" : "m";
-      const schoolID = `sch_${String(schoolCounter).padStart(
-        3,
-        "0"
-      )}${typeCode}`;
+      // Generate school ID using idGenerator utility
+      const schoolID = await generateSchoolID(schoolType);
 
       // Update admin with school profile
       const admin = await Admin.findById(req.user.id);
@@ -879,29 +868,25 @@ export const registerAdmin = [
         return res.status(400).json({ message: "Email already registered" });
       }
 
-      // Generate adminID and schoolID
+      // Generate adminID and schoolID using idGenerator
       const lastAdmin = await Admin.findOne().sort({ createdAt: -1 });
       let adminCounter = 1;
-      let schoolCounter = 1;
 
-      if (lastAdmin) {
-        if (lastAdmin.adminID) {
-          const lastAdminNum = parseInt(lastAdmin.adminID.substring(3));
-          adminCounter = lastAdminNum + 1;
-        }
-        if (lastAdmin.schoolID) {
-          const lastSchoolNum = parseInt(lastAdmin.schoolID.substring(4, 7));
-          schoolCounter = lastSchoolNum + 1;
+      if (lastAdmin && lastAdmin.adminID) {
+        // Extract number from adminID (e.g., "adm0001" -> 1)
+        const match = lastAdmin.adminID.match(/^adm(\d{4})$/);
+        if (match) {
+          adminCounter = parseInt(match[1], 10) + 1;
         }
       }
 
+      // Ensure counter doesn't exceed 9999
+      if (adminCounter > 9999) {
+        return res.status(500).json({ message: "Maximum admin limit reached" });
+      }
+
       const adminID = `adm${String(adminCounter).padStart(4, "0")}`;
-      const typeCode =
-        schoolType === "boys" ? "b" : schoolType === "girls" ? "g" : "m";
-      const schoolID = `sch_${String(schoolCounter).padStart(
-        3,
-        "0"
-      )}${typeCode}`;
+      const schoolID = await generateSchoolID(schoolType);
 
       const admin = new Admin({
         adminID,

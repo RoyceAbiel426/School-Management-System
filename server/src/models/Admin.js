@@ -7,7 +7,7 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      match: /^A[A-Z0-9]{7,9}$/, // Allow values like "A1234ABC"
+      match: /^adm\d{4}$/, // Format: adm0001, adm0002, etc.
     },
     name: {
       type: String,
@@ -25,18 +25,43 @@ const adminSchema = new mongoose.Schema(
     },
     contact: {
       type: String,
-      required: true,
       match: /^\+?\d{10,15}$/, // Supports + or plain digits
+    },
+    contactNumber: {
+      type: String,
+      match: /^\+?\d{10,15}$/, // Alias for compatibility
     },
     role: {
       type: String,
-      enum: ["super_admin", "admin", "moderator"],
+      enum: ["super_admin", "admin", "moderator", "principal"],
       default: "admin",
     },
     schoolName: {
       type: String,
       unique: true,
       sparse: true, // Allows null/undefined values to not conflict
+    },
+    schoolID: {
+      type: String,
+      unique: true,
+      sparse: true,
+      match: /^sch_\d{3}[bgm]$/, // Format: sch_010m
+    },
+    schoolType: {
+      type: String,
+      enum: ["boys", "girls", "mixed"],
+    },
+    address: {
+      type: String,
+    },
+    schoolEmail: {
+      type: String,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
+    establishedYear: {
+      type: Number,
+      min: 1800,
+      max: new Date().getFullYear(),
     },
     status: {
       type: String,

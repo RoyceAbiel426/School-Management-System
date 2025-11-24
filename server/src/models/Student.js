@@ -7,7 +7,7 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      match: /^S[A-Z0-9]{7,9}$/, // Allow values like "S1234ABC"
+      match: /^st\d{3}[bgm]\d{4}$/, // Format: st010m1099
     },
     name: {
       type: String,
@@ -20,6 +20,15 @@ const studentSchema = new mongoose.Schema(
       match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email pattern
     },
     password: {
+      type: String,
+      required: true,
+    },
+    schoolID: {
+      type: String,
+      required: true,
+      match: /^sch_\d{3}[bgm]$/, // Format: sch_010m
+    },
+    nic: {
       type: String,
       required: true,
     },
