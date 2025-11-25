@@ -107,16 +107,16 @@ client/
 │   │   │   │   ├── MyCourses.jsx            # View enrolled courses
 │   │   │   │   ├── CourseEnrollment.jsx     # Browse & enroll
 │   │   │   │   └── CourseDetail.jsx         # Course details with tabs
-│   │   │   ├── library/           # Library domain [PHASE 2.2 - PENDING]
-│   │   │   │   ├── BookCatalog.jsx          # [TO CREATE]
-│   │   │   │   ├── MyBooks.jsx              # [TO CREATE]
-│   │   │   │   └── BookRequest.jsx          # [TO CREATE]
+│   │   │   ├── library/           # Library domain ✅
+│   │   │   │   ├── BookCatalog.jsx          # Browse & search books
+│   │   │   │   ├── MyBooks.jsx              # View issued books
+│   │   │   │   └── BookRequest.jsx          # Request new books
 │   │   │   ├── pages/             # Centralized barrel exports
 │   │   │   │   └── index.js       # Re-exports all student pages
-│   │   │   ├── profile/           # Profile domain [PHASE 2.2 - PENDING]
-│   │   │   │   ├── EditProfile.jsx          # [TO CREATE]
-│   │   │   │   ├── ChangePassword.jsx       # [TO CREATE]
-│   │   │   │   └── NotificationSettings.jsx # [TO CREATE]
+│   │   │   ├── profile/           # Profile domain ✅
+│   │   │   │   ├── EditProfile.jsx          # Edit personal information
+│   │   │   │   ├── ChangePassword.jsx       # Change password & security
+│   │   │   │   └── NotificationSettings.jsx # Notification preferences
 │   │   │   ├── results/           # Results domain
 │   │   │   │   ├── MyResults.jsx            # All exams with filtering
 │   │   │   │   ├── ResultsAnalysis.jsx      # Performance analytics
@@ -126,12 +126,24 @@ client/
 │   │   │       ├── JoinSport.jsx            # Browse & join
 │   │   │       └── SportDetail.jsx          # Sport details with tabs
 │   │   │
-│   │   ├── teacher/               # Teacher feature [FUTURE - PHASE 2.3]
-│   │   │   ├── classes/           # Class management domain [TO CREATE]
-│   │   │   ├── attendance/        # Attendance marking domain [TO CREATE]
-│   │   │   ├── results/           # Results entry domain [TO CREATE]
-│   │   │   ├── components/        # Shared teacher components [TO CREATE]
-│   │   │   └── pages/             # Centralized exports [TO CREATE]
+│   │   ├── teacher/               # Teacher feature ✅ DOMAIN-ORGANIZED (Phase 2.3)
+│   │   │   ├── attendance/        # Attendance marking domain
+│   │   │   │   ├── MarkAttendance.jsx       # Mark student attendance
+│   │   │   │   ├── AttendanceReport.jsx     # Attendance reports
+│   │   │   │   └── StudentAttendanceHistory.jsx # Student attendance history
+│   │   │   ├── classes/           # Class management domain
+│   │   │   │   ├── MyClasses.jsx            # View assigned classes
+│   │   │   │   ├── ClassDetail.jsx          # Class details with tabs
+│   │   │   │   └── ClassStatistics.jsx      # Class performance analytics
+│   │   │   ├── components/        # Shared teacher components [EMPTY]
+│   │   │   ├── pages/             # Centralized barrel exports
+│   │   │   │   └── index.js       # Re-exports all teacher pages
+│   │   │   ├── progress/          # Student progress tracking domain
+│   │   │   │   ├── ClassPerformance.jsx     # Overall class performance
+│   │   │   │   └── StudentProgress.jsx      # Individual student progress
+│   │   │   └── results/           # Results entry domain
+│   │   │       ├── EnterResults.jsx         # Enter exam results
+│   │   │       └── ResultsSummary.jsx       # Results summary & analytics
 │   │   │
 │   │   ├── coach/                 # Coach feature [FUTURE - PHASE 2.4]
 │   │   │   ├── sports/            # Sports management domain [TO CREATE]
@@ -276,26 +288,70 @@ This project uses **Domain-Driven Design (DDD)** for the features directory, org
 - **Exports**: Centralized in `pages/index.js` for easy imports
 - **Total**: 14 pages across 6 domains
 
-### **Teacher** (Phase 2.3 - Future)
+### **Teacher** ✅ (Phase 2.3 - COMPLETE)
 
 - **Routes**: `/teacher/*`
-- **Structure**: Domain-organized (TBD)
+- **Structure**: Domain-organized by functional area
 - **Services**: `teacherService.js`
-- **Planned Domains**:
-  - **classes/** - Class management & student lists
-  - **attendance/** - Mark attendance for classes
-  - **results/** - Enter exam results
-  - **progress/** - Track student progress
-- **Status**: Not yet started
+- **Domains**:
+  - **classes/** ✅ (3/3 pages)
+    - MyClasses.jsx - View all assigned classes with stats
+    - ClassDetail.jsx - Detailed class view with tabs
+    - ClassStatistics.jsx - Class performance analytics
+  - **attendance/** ✅ (3/3 pages)
+    - MarkAttendance.jsx - Mark student attendance
+    - AttendanceReport.jsx - Attendance reports & analytics
+    - StudentAttendanceHistory.jsx - Individual student attendance
+  - **results/** ✅ (2/2 pages)
+    - EnterResults.jsx - Enter exam results
+    - ResultsSummary.jsx - Results summary & analytics
+  - **progress/** ✅ (2/2 pages)
+    - ClassPerformance.jsx - Overall class performance
+    - StudentProgress.jsx - Individual student progress
+- **Exports**: Centralized in `pages/index.js`
+- **Total**: 10 pages across 4 domains
 
-### **Coach** (Phase 2.4 - Future)
+### **Coach** ✅ (Phase 2.4 - COMPLETE)
 
 - **Routes**: `/coach/*`
-- **Structure**: Domain-organized (TBD)
+- **Structure**: Domain-organized by functional area
 - **Services**: `coachService.js`
-- **Planned Domains**:
-  - **sports/** - Manage sports activities
-  - **participants/** - Manage participants
+- **Domains**:
+  - **sports/** ✅ (3/3 pages)
+    - MySports.jsx - View all assigned sports with stats
+    - SportDetail.jsx - Detailed sport view with tabs
+    - SportStatistics.jsx - Sport performance analytics
+  - **participants/** ✅ (3/3 pages)
+    - ParticipantsList.jsx - View all participants with filtering
+    - AddParticipant.jsx - Add participants to sports
+    - ParticipantPerformance.jsx - Individual participant performance
+  - **events/** ✅ (3/3 pages)
+    - EventsList.jsx - View all sports events
+    - CreateEvent.jsx - Create new events/competitions
+    - EventResults.jsx - Enter event results
+  - **performance/** ✅ (1/1 pages)
+    - PerformanceTracking.jsx - Performance overview & tracking
+- **Exports**: Centralized in `pages/index.js`
+- **Total**: 10 pages across 4 domains
+
+### **Librarian** ✅ (Phase 2.5 - COMPLETE)
+
+- **Routes**: `/librarian/*`
+- **Structure**: Domain-organized by functional area
+- **Services**: `librarianService.js`
+- **Domains**:
+  - **books/** ✅ (2/2 pages)
+    - BookCatalog.jsx - Manage book collection with search/filter
+    - AddEditBook.jsx - Add new books or edit existing ones
+  - **transactions/** ✅ (2/2 pages)
+    - IssueReturnBooks.jsx - Issue books to students and handle returns
+    - TransactionHistory.jsx - Complete transaction history with filtering
+  - **members/** ✅ (1/1 pages)
+    - LibraryMembers.jsx - Manage library memberships and overdue books
+  - **analytics/** ✅ (1/1 pages)
+    - LibraryAnalytics.jsx - Library performance insights and reports
+- **Exports**: Centralized in `pages/index.js`
+- **Total**: 6 pages across 4 domains
   - **events/** - Schedule and manage events
   - **performance/** - Track athlete performance
 - **Status**: Not yet started
@@ -637,6 +693,7 @@ Role-based access control
 ---
 
 **Last Updated**: November 25, 2025
-**Current Phase**: Phase 2.2 (Student Features) - 11/14 pages complete
+**Current Phase**: Phase 2 Complete ✅ - ALL role-based feature pages done
 **Architecture**: Domain-Driven Design (DDD) + Feature-Sliced Design
-**Pattern Consistency**: ✅ All features follow same domain organization
+**Pattern Consistency**: ✅ All 5/5 roles follow same domain organization (75+ pages total)
+**Roles Complete**: Admin (35+) + Student (14) + Teacher (10) + Coach (10) + Librarian (6) = 75+ pages
