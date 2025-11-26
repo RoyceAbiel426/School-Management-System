@@ -23,23 +23,58 @@ export const ROUTES = {
   // Admin routes
   ADMIN_DASHBOARD: "/admin/dashboard",
   ADMIN_PROFILE: "/admin/profile",
+
+  // Admin - School Management
   ADMIN_SCHOOL_PROFILE: "/admin/school-profile",
+  ADMIN_SCHOOL_SETUP: "/admin/school-profile/setup",
+  ADMIN_PRINCIPAL_PROFILE: "/admin/principal-profile",
+
+  // Admin - Grade Management
+  ADMIN_GRADES: "/admin/grades",
+  ADMIN_GRADES_CREATE: "/admin/grades/create",
+  ADMIN_GRADES_VIEW: "/admin/grades/:gradeNumber",
+  ADMIN_CLASSROOMS: "/admin/classrooms",
+
+  // Admin - Students
   ADMIN_STUDENTS: "/admin/students",
   ADMIN_STUDENTS_CREATE: "/admin/students/create",
   ADMIN_STUDENTS_EDIT: "/admin/students/:id/edit",
   ADMIN_STUDENTS_VIEW: "/admin/students/:id",
+
+  // Admin - Teachers
+  ADMIN_TEACHERS: "/admin/teachers",
+  ADMIN_TEACHERS_CREATE: "/admin/teachers/create",
+  ADMIN_TEACHERS_EDIT: "/admin/teachers/:id/edit",
+
+  // Admin - Courses
   ADMIN_COURSES: "/admin/courses",
   ADMIN_COURSES_CREATE: "/admin/courses/create",
   ADMIN_COURSES_EDIT: "/admin/courses/:id/edit",
+  ADMIN_COURSES_MODULES: "/admin/courses/:courseId/modules",
+
+  // Admin - Exams
+  ADMIN_EXAMS: "/admin/exams",
+  ADMIN_EXAMS_CREATE: "/admin/exams/create",
+  ADMIN_EXAMS_SCHEDULE: "/admin/exams/schedule",
+
+  // Admin - Sports
   ADMIN_SPORTS: "/admin/sports",
   ADMIN_SPORTS_CREATE: "/admin/sports/create",
+
+  // Admin - Library
   ADMIN_LIBRARY: "/admin/library",
   ADMIN_LIBRARY_CREATE: "/admin/library/create",
+
+  // Admin - Attendance
   ADMIN_ATTENDANCE: "/admin/attendance",
+  ADMIN_ATTENDANCE_FINALIZE: "/admin/attendance/finalize",
+
+  // Admin - Results
   ADMIN_RESULTS: "/admin/results",
+
+  // Admin - Notices & Complaints
   ADMIN_NOTICES: "/admin/notices",
   ADMIN_COMPLAINTS: "/admin/complaints",
-  ADMIN_TEACHERS: "/admin/teachers",
   ADMIN_COACHES: "/admin/coaches",
 
   // Admin route shortcuts (for nested routes)

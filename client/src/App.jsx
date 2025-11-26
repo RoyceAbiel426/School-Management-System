@@ -18,6 +18,38 @@ const StudentRegister = React.lazy(() =>
 const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
 const StudentDashboard = React.lazy(() => import("./pages/StudentDashboard"));
 
+// Admin School Management Pages
+const SchoolProfileSetup = React.lazy(() =>
+  import("./features/admin/school/SchoolProfileSetup")
+);
+const SchoolProfile = React.lazy(() =>
+  import("./features/admin/school/SchoolProfile")
+);
+const PrincipalProfile = React.lazy(() =>
+  import("./features/admin/school/PrincipalProfile")
+);
+
+// Admin Grade Management Pages
+const GradeList = React.lazy(() => import("./features/admin/grades/GradeList"));
+const CreateGrade = React.lazy(() =>
+  import("./features/admin/grades/CreateGrade")
+);
+const GradeDetail = React.lazy(() =>
+  import("./features/admin/grades/GradeDetail")
+);
+const ClassroomManagement = React.lazy(() =>
+  import("./features/admin/grades/ClassroomManagement")
+);
+
+// Admin Exam Management Pages
+const CreateExam = React.lazy(() =>
+  import("./features/admin/exams/CreateExam")
+);
+const ExamSchedule = React.lazy(() =>
+  import("./features/admin/exams/ExamSchedule")
+);
+const ExamList = React.lazy(() => import("./features/admin/exams/ExamList"));
+
 // Admin Student Management Pages
 const StudentList = React.lazy(() =>
   import("./features/admin/students/StudentList")
@@ -62,6 +94,9 @@ const EditCourse = React.lazy(() =>
 const CourseDetail = React.lazy(() =>
   import("./features/admin/courses/CourseDetail")
 );
+const ModuleManagement = React.lazy(() =>
+  import("./features/admin/courses/ModuleManagement")
+);
 
 // Admin Sports Management Pages
 const SportsList = React.lazy(() =>
@@ -103,6 +138,9 @@ const AttendanceReport = React.lazy(() =>
 const StudentAttendance = React.lazy(() =>
   import("./features/admin/attendance/StudentAttendance")
 );
+const AttendanceFinalization = React.lazy(() =>
+  import("./features/admin/attendance/AttendanceFinalization")
+);
 
 // Admin Results Management Pages
 const ResultsList = React.lazy(() =>
@@ -135,6 +173,144 @@ const ComplaintsList = React.lazy(() =>
 );
 const ComplaintDetail = React.lazy(() =>
   import("./features/admin/complaints/ComplaintDetail")
+);
+
+// Student Feature Pages
+const MyCourses = React.lazy(() =>
+  import("./features/student/courses/MyCourses")
+);
+const CourseEnrollment = React.lazy(() =>
+  import("./features/student/courses/CourseEnrollment")
+);
+const StudentCourseDetail = React.lazy(() =>
+  import("./features/student/courses/CourseDetail")
+);
+const MyAttendance = React.lazy(() =>
+  import("./features/student/attendance/MyAttendance")
+);
+const StudentAttendanceReport = React.lazy(() =>
+  import("./features/student/attendance/AttendanceReport")
+);
+const MyResults = React.lazy(() =>
+  import("./features/student/results/MyResults")
+);
+const ResultsAnalysis = React.lazy(() =>
+  import("./features/student/results/ResultsAnalysis")
+);
+const ExamResultDetail = React.lazy(() =>
+  import("./features/student/results/ExamResultDetail")
+);
+const MySports = React.lazy(() => import("./features/student/sports/MySports"));
+const JoinSport = React.lazy(() =>
+  import("./features/student/sports/JoinSport")
+);
+const StudentSportDetail = React.lazy(() =>
+  import("./features/student/sports/SportDetail")
+);
+const BookCatalog = React.lazy(() =>
+  import("./features/student/library/BookCatalog")
+);
+const MyBooks = React.lazy(() => import("./features/student/library/MyBooks"));
+const BookRequest = React.lazy(() =>
+  import("./features/student/library/BookRequest")
+);
+const EditProfile = React.lazy(() =>
+  import("./features/student/profile/EditProfile")
+);
+const ChangePassword = React.lazy(() =>
+  import("./features/student/profile/ChangePassword")
+);
+const NotificationSettings = React.lazy(() =>
+  import("./features/student/profile/NotificationSettings")
+);
+
+// Teacher Feature Pages
+const TeacherDashboard = React.lazy(() => import("./pages/TeacherDashboard"));
+const MyClasses = React.lazy(() =>
+  import("./features/teacher/classes/MyClasses")
+);
+const ClassDetail = React.lazy(() =>
+  import("./features/teacher/classes/ClassDetail")
+);
+const ClassStatistics = React.lazy(() =>
+  import("./features/teacher/classes/ClassStatistics")
+);
+const TeacherMarkAttendance = React.lazy(() =>
+  import("./features/teacher/attendance/MarkAttendance")
+);
+const TeacherAttendanceReport = React.lazy(() =>
+  import("./features/teacher/attendance/AttendanceReport")
+);
+const StudentAttendanceHistory = React.lazy(() =>
+  import("./features/teacher/attendance/StudentAttendanceHistory")
+);
+const TeacherEnterResults = React.lazy(() =>
+  import("./features/teacher/results/EnterResults")
+);
+const ResultsSummary = React.lazy(() =>
+  import("./features/teacher/results/ResultsSummary")
+);
+const ClassPerformance = React.lazy(() =>
+  import("./features/teacher/progress/ClassPerformance")
+);
+const StudentProgress = React.lazy(() =>
+  import("./features/teacher/progress/StudentProgress")
+);
+
+// Coach Feature Pages
+const CoachDashboard = React.lazy(() => import("./pages/CoachDashboard"));
+const CoachMySports = React.lazy(() =>
+  import("./features/coach/sports/MySports")
+);
+const CoachSportDetail = React.lazy(() =>
+  import("./features/coach/sports/SportDetail")
+);
+const SportStatistics = React.lazy(() =>
+  import("./features/coach/sports/SportStatistics")
+);
+const ParticipantsList = React.lazy(() =>
+  import("./features/coach/participants/ParticipantsList")
+);
+const AddParticipant = React.lazy(() =>
+  import("./features/coach/participants/AddParticipant")
+);
+const ParticipantPerformance = React.lazy(() =>
+  import("./features/coach/participants/ParticipantPerformance")
+);
+const EventsList = React.lazy(() =>
+  import("./features/coach/events/EventsList")
+);
+const CreateEvent = React.lazy(() =>
+  import("./features/coach/events/CreateEvent")
+);
+const EventResults = React.lazy(() =>
+  import("./features/coach/events/EventResults")
+);
+const PerformanceTracking = React.lazy(() =>
+  import("./features/coach/performance/PerformanceTracking")
+);
+
+// Librarian Feature Pages
+const LibrarianDashboard = React.lazy(() =>
+  import("./pages/LibrarianDashboard")
+);
+const LibrarianBookCatalog = React.lazy(() =>
+  import("./features/librarian/books/BookCatalog")
+);
+const AddEditBook = React.lazy(() =>
+  import("./features/librarian/books/AddEditBook")
+);
+const IssueReturnBooks = React.lazy(() =>
+  import("./features/librarian/transactions/IssueReturnBooks")
+);
+const TransactionHistory = React.lazy(() =>
+  import("./features/librarian/transactions/TransactionHistory")
+);
+const LibraryMembers = React.lazy(() =>
+  import("./features/librarian/members/LibraryMembers")
+);
+const LibraryAnalytics = React.lazy(() =>
+  import("./features/librarian/analytics/LibraryAnalytics")
 );
 
 function App() {
@@ -173,6 +349,152 @@ function App() {
                       ]}
                     >
                       <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Admin School Management Routes */}
+                <Route
+                  path={ROUTES.ADMIN_SCHOOL_SETUP}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <SchoolProfileSetup />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_SCHOOL_PROFILE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <SchoolProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_PRINCIPAL_PROFILE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <PrincipalProfile />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Admin Grade Management Routes */}
+                <Route
+                  path={ROUTES.ADMIN_GRADES}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <GradeList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_GRADES_CREATE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <CreateGrade />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_GRADES_VIEW}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <GradeDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_CLASSROOMS}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <ClassroomManagement />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Admin Exam Management Routes */}
+                <Route
+                  path={ROUTES.ADMIN_EXAMS}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <ExamList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_EXAMS_CREATE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <CreateExam />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.ADMIN_EXAMS_SCHEDULE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      <ExamSchedule />
                     </ProtectedRoute>
                   }
                 />
@@ -364,6 +686,21 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path={ROUTES.ADMIN_COURSES_MODULES}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      \n <ModuleManagement />
+                      \n{" "}
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Admin Sports Management Routes */}
                 <Route
@@ -552,6 +889,21 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path={ROUTES.ADMIN_ATTENDANCE_FINALIZE}
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[
+                        ROLES.ADMIN,
+                        ROLES.PRINCIPAL,
+                        ROLES.SUPER_ADMIN,
+                      ]}
+                    >
+                      \n <AttendanceFinalization />
+                      \n{" "}
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Admin Results Management Routes */}
                 <Route
@@ -691,6 +1043,424 @@ function App() {
                   element={
                     <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
                       <StudentDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Courses */}
+                <Route
+                  path={ROUTES.STUDENT_COURSES}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <MyCourses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_COURSES}/enroll`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <CourseEnrollment />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_COURSES}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <StudentCourseDetail />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Attendance */}
+                <Route
+                  path={ROUTES.STUDENT_ATTENDANCE}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <MyAttendance />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_ATTENDANCE}/report`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <StudentAttendanceReport />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Results */}
+                <Route
+                  path={ROUTES.STUDENT_RESULTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <MyResults />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_RESULTS}/analysis`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <ResultsAnalysis />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_RESULTS}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <ExamResultDetail />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Sports */}
+                <Route
+                  path={ROUTES.STUDENT_SPORTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <MySports />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_SPORTS}/join`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <JoinSport />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_SPORTS}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <StudentSportDetail />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Library */}
+                <Route
+                  path={ROUTES.STUDENT_LIBRARY}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <BookCatalog />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_LIBRARY}/my-books`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <MyBooks />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_LIBRARY}/request`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <BookRequest />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Student Profile */}
+                <Route
+                  path={ROUTES.STUDENT_PROFILE}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <EditProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_PROFILE}/password`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <ChangePassword />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.STUDENT_PROFILE}/notifications`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                      <NotificationSettings />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Teacher Routes */}
+                <Route
+                  path={ROUTES.TEACHER_DASHBOARD}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <TeacherDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Teacher Classes */}
+                <Route
+                  path={ROUTES.TEACHER_CLASSES}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <MyClasses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_CLASSES}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <ClassDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_CLASSES}/:id/statistics`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <ClassStatistics />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Teacher Attendance */}
+                <Route
+                  path={ROUTES.TEACHER_ATTENDANCE}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <TeacherMarkAttendance />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_ATTENDANCE}/report`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <TeacherAttendanceReport />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_ATTENDANCE}/student/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <StudentAttendanceHistory />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Teacher Results */}
+                <Route
+                  path={ROUTES.TEACHER_RESULTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <TeacherEnterResults />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_RESULTS}/summary`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <ResultsSummary />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Teacher Progress */}
+                <Route
+                  path={`${ROUTES.TEACHER_CLASSES}/performance`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <ClassPerformance />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.TEACHER_CLASSES}/student/:id/progress`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                      <StudentProgress />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Coach Routes */}
+                <Route
+                  path={ROUTES.COACH_DASHBOARD}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <CoachDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Coach Sports */}
+                <Route
+                  path={ROUTES.COACH_SPORTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <CoachMySports />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_SPORTS}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <CoachSportDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_SPORTS}/:id/statistics`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <SportStatistics />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Coach Participants */}
+                <Route
+                  path={ROUTES.COACH_PARTICIPANTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <ParticipantsList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_PARTICIPANTS}/add`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <AddParticipant />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_PARTICIPANTS}/:id`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <ParticipantPerformance />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Coach Events */}
+                <Route
+                  path={ROUTES.COACH_EVENTS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <EventsList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_EVENTS}/create`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <CreateEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.COACH_EVENTS}/:id/results`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <EventResults />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Coach Performance */}
+                <Route
+                  path={ROUTES.COACH_PERFORMANCE}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                      <PerformanceTracking />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Librarian Routes */}
+                <Route
+                  path={ROUTES.LIBRARIAN_DASHBOARD}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <LibrarianDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Librarian Books */}
+                <Route
+                  path={ROUTES.LIBRARIAN_BOOKS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <LibrarianBookCatalog />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.LIBRARIAN_BOOKS}/add`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <AddEditBook />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${ROUTES.LIBRARIAN_BOOKS}/edit/:bookId`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <AddEditBook />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Librarian Transactions */}
+                <Route
+                  path={ROUTES.LIBRARIAN_ISSUE}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <IssueReturnBooks />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTES.LIBRARIAN_TRANSACTIONS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <TransactionHistory />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Librarian Members */}
+                <Route
+                  path={`${ROUTES.LIBRARIAN_DASHBOARD}/members`}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <LibraryMembers />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Librarian Analytics */}
+                <Route
+                  path={ROUTES.LIBRARIAN_STATS}
+                  element={
+                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                      <LibraryAnalytics />
                     </ProtectedRoute>
                   }
                 />
