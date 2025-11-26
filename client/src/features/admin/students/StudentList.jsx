@@ -18,8 +18,10 @@ import Modal from "../../../components/common/Modal";
 import Pagination from "../../../components/common/Pagination";
 import Select from "../../../components/common/Select";
 import Table from "../../../components/common/Table";
+import { ExportButton } from "../../../components/export";
 import { ROUTES } from "../../../constants/routes";
 import { adminService } from "../../../services/adminService";
+import { studentListReportTemplate } from "../../../utils/exportHelpers";
 
 export default function StudentList() {
   const [students, setStudents] = useState([]);
@@ -213,6 +215,23 @@ export default function StudentList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <ExportButton
+            data={students.map((s) => ({
+              studentId: s.studentId || s._id,
+              name: s.name,
+              email: s.email,
+              grade: s.grade,
+              class: s.class?.name || "Not assigned",
+              gender: s.gender,
+              contact: s.contact || "N/A",
+              enrollmentDate: s.enrollmentDate,
+            }))}
+            columns={studentListReportTemplate.columns}
+            filename="students_list"
+            title="Student List Report"
+            metadata={{ generatedBy: "Admin", generatedAt: new Date() }}
+            variant="outline"
+          />
           <Link to={`${ROUTES.ADMIN_ROUTES.STUDENTS}/import`}>
             <Button variant="outline">
               <Upload className="w-4 h-4 mr-2" />

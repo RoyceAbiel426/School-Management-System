@@ -4,16 +4,23 @@ import {
   Calendar,
   Edit,
   Eye,
+  FileText,
   Library,
   LogOut,
   Plus,
   Settings,
   Trash2,
+  TrendingDown,
+  TrendingUp,
   Trophy,
   User,
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { BarChart, DonutChart, LineChart } from "../components/charts";
+import Button from "../components/common/Button";
+import { ReportBuilder } from "../components/export";
+import { ActivityFeed, NotificationBell } from "../components/realtime";
 import api from "../utils/axiosInstance";
 
 const AdminDashboard = () => {
@@ -32,6 +39,7 @@ const AdminDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showReportBuilder, setShowReportBuilder] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -153,65 +161,229 @@ const AdminDashboard = () => {
     { id: "coaches", name: "Coaches", icon: User },
   ];
 
-  const renderOverview = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center">
-          <div className="p-3 bg-blue-100 rounded-full">
-            <Users className="h-6 w-6 text-blue-600" />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Total Students</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {data.students.length}
-            </p>
-          </div>
-        </div>
-      </div>
+  const renderOverview = () => {
+    // Sample data for charts (replace with real data from API)
+    const attendanceTrendData = [
+      { month: "Jan", present: 850, absent: 150 },
+      { month: "Feb", present: 880, absent: 120 },
+      { month: "Mar", present: 920, absent: 80 },
+      { month: "Apr", present: 900, absent: 100 },
+      { month: "May", present: 950, absent: 50 },
+      { month: "Jun", present: 930, absent: 70 },
+    ];
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center">
-          <div className="p-3 bg-green-100 rounded-full">
-            <BookOpen className="h-6 w-6 text-green-600" />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Active Courses</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {data.courses.length}
-            </p>
-          </div>
-        </div>
-      </div>
+    const gradeDistributionData = [
+      { name: "A+", students: 150 },
+      { name: "A", students: 280 },
+      { name: "B", students: 320 },
+      { name: "C", students: 180 },
+      { name: "D", students: 50 },
+      { name: "F", students: 20 },
+    ];
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center">
-          <div className="p-3 bg-yellow-100 rounded-full">
-            <Trophy className="h-6 w-6 text-yellow-600" />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Sports Teams</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {data.sports.length}
-            </p>
-          </div>
-        </div>
-      </div>
+    const bookCategoryData = [
+      { name: "Science", value: 450 },
+      { name: "Mathematics", value: 320 },
+      { name: "Literature", value: 280 },
+      { name: "History", value: 200 },
+      { name: "Arts", value: 150 },
+    ];
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center">
-          <div className="p-3 bg-purple-100 rounded-full">
-            <Library className="h-6 w-6 text-purple-600" />
+    const enrollmentTrendData = [
+      { month: "Jan", students: 800 },
+      { month: "Feb", students: 850 },
+      { month: "Mar", students: 920 },
+      { month: "Apr", students: 980 },
+      { month: "May", students: 1050 },
+      { month: "Jun", students: 1100 },
+    ];
+
+    return (
+      <div className="space-y-6">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="p-3 bg-blue-100 rounded-full">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Students
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {data.students.length}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center text-green-600">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span className="text-sm font-medium">+12%</span>
+              </div>
+            </div>
           </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Library Books</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {data.books.length}
-            </p>
+
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="p-3 bg-green-100 rounded-full">
+                  <BookOpen className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Active Courses
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {data.courses.length}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center text-green-600">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span className="text-sm font-medium">+5%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="p-3 bg-yellow-100 rounded-full">
+                  <Trophy className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Sports Teams
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {data.sports.length}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center text-green-600">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span className="text-sm font-medium">+3%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="p-3 bg-purple-100 rounded-full">
+                  <Library className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Library Books
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {data.books.length}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center text-red-600">
+                <TrendingDown className="h-4 w-4 mr-1" />
+                <span className="text-sm font-medium">-2%</span>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Attendance Trend */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <LineChart
+              data={attendanceTrendData}
+              lines={[
+                { dataKey: "present", name: "Present", color: "#10B981" },
+                { dataKey: "absent", name: "Absent", color: "#EF4444" },
+              ]}
+              xAxisKey="month"
+              title="Attendance Trend (Last 6 Months)"
+              height={300}
+            />
+          </div>
+
+          {/* Grade Distribution */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <BarChart
+              data={gradeDistributionData}
+              bars={[
+                { dataKey: "students", name: "Students", color: "#3B82F6" },
+              ]}
+              xAxisKey="name"
+              title="Grade Distribution"
+              height={300}
+            />
+          </div>
+
+          {/* Book Category Distribution */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <DonutChart
+              data={bookCategoryData}
+              title="Library Books by Category"
+              showCenterText={true}
+              centerText={`${data.books.length} Books`}
+              colorPalette="library"
+              height={300}
+            />
+          </div>
+
+          {/* Enrollment Trend */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <LineChart
+              data={enrollmentTrendData}
+              lines={[
+                {
+                  dataKey: "students",
+                  name: "Total Students",
+                  color: "#8B5CF6",
+                },
+              ]}
+              xAxisKey="month"
+              title="Student Enrollment Growth"
+              height={300}
+            />
+          </div>
+        </div>
+
+        {/* Additional Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Average Attendance
+            </h3>
+            <p className="text-3xl font-bold text-green-600">92.5%</p>
+            <p className="text-sm text-gray-500 mt-1">This month</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Active Teachers
+            </h3>
+            <p className="text-3xl font-bold text-blue-600">48</p>
+            <p className="text-sm text-gray-500 mt-1">Full-time faculty</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Books Issued
+            </h3>
+            <p className="text-3xl font-bold text-purple-600">342</p>
+            <p className="text-sm text-gray-500 mt-1">Currently borrowed</p>
+          </div>
+        </div>
+
+        {/* Activity Feed */}
+        <div className="mt-6">
+          <ActivityFeed limit={15} showFilters={true} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderStudents = () => (
     <div className="bg-white rounded-lg shadow-md">
@@ -820,6 +992,19 @@ const AdminDashboard = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowReportBuilder(true)}
+                icon={<FileText className="h-4 w-4" />}
+              >
+                Reports
+              </Button>
+              <NotificationBell
+                onNotificationClick={(notif) =>
+                  console.log("Notification clicked:", notif)
+                }
+              />
               <button className="text-gray-500 hover:text-gray-700">
                 <Settings className="h-5 w-5" />
               </button>
@@ -906,6 +1091,12 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Report Builder Modal */}
+      <ReportBuilder
+        isOpen={showReportBuilder}
+        onClose={() => setShowReportBuilder(false)}
+      />
     </div>
   );
 };
