@@ -1,6 +1,10 @@
 import React from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/common/ErrorBoundary";
+import PWAInstallPrompt from "./components/pwa/PWAInstallPrompt";
+import PWAUpdatePrompt from "./components/pwa/PWAUpdatePrompt";
 import { ROLES } from "./constants/roles";
 import { ROUTES } from "./constants/routes";
 import { AuthProvider } from "./context/AuthContext";
@@ -297,6 +301,12 @@ const LibrarianDashboard = React.lazy(() =>
 const LibrarianBookCatalog = React.lazy(() =>
   import("./features/librarian/books/BookCatalog")
 );
+
+// Error Pages
+const NotFound = React.lazy(() => import("./pages/errors/NotFound"));
+const Unauthorized = React.lazy(() => import("./pages/errors/Unauthorized"));
+const ServerError = React.lazy(() => import("./pages/errors/ServerError"));
+const Offline = React.lazy(() => import("./pages/errors/Offline"));
 const AddEditBook = React.lazy(() =>
   import("./features/librarian/books/AddEditBook")
 );
@@ -315,1167 +325,1179 @@ const LibraryAnalytics = React.lazy(() =>
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <React.Suspense
-              fallback={
-                <div className="min-h-screen flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-                </div>
-              }
-            >
-              <Routes>
-                {/* Public Routes */}
-                <Route path={ROUTES.HOME} element={<LandingPage />} />
-                <Route path={ROUTES.LOGIN} element={<StudentLogin />} />
-                <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
-                <Route
-                  path={ROUTES.ADMIN_REGISTER}
-                  element={<AdminRegister />}
-                />
-                <Route path={ROUTES.REGISTER} element={<StudentRegister />} />
+    <HelmetProvider>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <ThemeProvider>
+            <AuthProvider>
+              <NotificationProvider>
+                <React.Suspense
+                  fallback={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+                    </div>
+                  }
+                >
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path={ROUTES.HOME} element={<LandingPage />} />
+                    <Route path={ROUTES.LOGIN} element={<StudentLogin />} />
+                    <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
+                    <Route
+                      path={ROUTES.ADMIN_REGISTER}
+                      element={<AdminRegister />}
+                    />
+                    <Route
+                      path={ROUTES.REGISTER}
+                      element={<StudentRegister />}
+                    />
 
-                {/* Admin Routes */}
-                <Route
-                  path={ROUTES.ADMIN_DASHBOARD}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_DASHBOARD}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin School Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_SCHOOL_SETUP}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <SchoolProfileSetup />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_SCHOOL_PROFILE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <SchoolProfile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_PRINCIPAL_PROFILE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <PrincipalProfile />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin School Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_SCHOOL_SETUP}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <SchoolProfileSetup />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_SCHOOL_PROFILE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <SchoolProfile />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_PRINCIPAL_PROFILE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <PrincipalProfile />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Grade Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_GRADES}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <GradeList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_GRADES_CREATE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateGrade />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_GRADES_VIEW}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <GradeDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_CLASSROOMS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ClassroomManagement />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Grade Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_GRADES}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <GradeList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_GRADES_CREATE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateGrade />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_GRADES_VIEW}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <GradeDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_CLASSROOMS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ClassroomManagement />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Exam Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_EXAMS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ExamList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_EXAMS_CREATE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateExam />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_EXAMS_SCHEDULE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ExamSchedule />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Exam Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_EXAMS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ExamList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_EXAMS_CREATE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateExam />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_EXAMS_SCHEDULE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ExamSchedule />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Student Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.STUDENTS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <StudentList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateStudent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditStudent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <StudentDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/import`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <BulkImportStudents />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Student Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.STUDENTS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <StudentList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateStudent />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditStudent />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <StudentDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.STUDENTS}/import`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <BulkImportStudents />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Teacher Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.TEACHERS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <TeacherList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateTeacher />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditTeacher />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <TeacherDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Teacher Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.TEACHERS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <TeacherList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateTeacher />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditTeacher />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.TEACHERS}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <TeacherDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Course Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.COURSES}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CourseList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.COURSES}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateCourse />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.COURSES}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditCourse />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.COURSES}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CourseDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_COURSES_MODULES}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      \n <ModuleManagement />
-                      \n{" "}
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Course Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.COURSES}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CourseList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.COURSES}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateCourse />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.COURSES}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditCourse />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.COURSES}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CourseDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_COURSES_MODULES}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          \n <ModuleManagement />
+                          \n{" "}
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Sports Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.SPORTS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <SportsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.SPORTS}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateSport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.SPORTS}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditSport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.SPORTS}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <SportDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Sports Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.SPORTS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <SportsList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.SPORTS}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateSport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.SPORTS}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditSport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.SPORTS}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <SportDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Library Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.LIBRARY}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <BooksList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateBook />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditBook />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/transactions`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <LibraryTransactions />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <BookDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Library Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.LIBRARY}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <BooksList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateBook />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditBook />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/transactions`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <LibraryTransactions />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.LIBRARY}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <BookDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Attendance Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.ATTENDANCE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <AttendanceOverview />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/mark`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <MarkAttendance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/report`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <AttendanceReport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/student/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <StudentAttendance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.ADMIN_ATTENDANCE_FINALIZE}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      \n <AttendanceFinalization />
-                      \n{" "}
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Attendance Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.ATTENDANCE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <AttendanceOverview />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/mark`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <MarkAttendance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/report`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <AttendanceReport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.ATTENDANCE}/student/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <StudentAttendance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.ADMIN_ATTENDANCE_FINALIZE}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          \n <AttendanceFinalization />
+                          \n{" "}
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Results Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.RESULTS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ResultsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.RESULTS}/enter`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EnterResults />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.RESULTS}/report`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ResultsReport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.RESULTS}/student/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <StudentResult />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Results Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.RESULTS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ResultsList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.RESULTS}/enter`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EnterResults />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.RESULTS}/report`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ResultsReport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.RESULTS}/student/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <StudentResult />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Notices Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.NOTICES}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <NoticesList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.NOTICES}/create`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <CreateNotice />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.NOTICES}/edit/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <EditNotice />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Notices Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.NOTICES}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <NoticesList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.NOTICES}/create`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <CreateNotice />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.NOTICES}/edit/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <EditNotice />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Admin Complaints Management Routes */}
-                <Route
-                  path={ROUTES.ADMIN_ROUTES.COMPLAINTS}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ComplaintsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.ADMIN_ROUTES.COMPLAINTS}/:id`}
-                  element={
-                    <ProtectedRoute
-                      allowedRoles={[
-                        ROLES.ADMIN,
-                        ROLES.PRINCIPAL,
-                        ROLES.SUPER_ADMIN,
-                      ]}
-                    >
-                      <ComplaintDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Admin Complaints Management Routes */}
+                    <Route
+                      path={ROUTES.ADMIN_ROUTES.COMPLAINTS}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ComplaintsList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.ADMIN_ROUTES.COMPLAINTS}/:id`}
+                      element={
+                        <ProtectedRoute
+                          allowedRoles={[
+                            ROLES.ADMIN,
+                            ROLES.PRINCIPAL,
+                            ROLES.SUPER_ADMIN,
+                          ]}
+                        >
+                          <ComplaintDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Routes */}
-                <Route
-                  path={ROUTES.STUDENT_DASHBOARD}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <StudentDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Routes */}
+                    <Route
+                      path={ROUTES.STUDENT_DASHBOARD}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <StudentDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Courses */}
-                <Route
-                  path={ROUTES.STUDENT_COURSES}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <MyCourses />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_COURSES}/enroll`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <CourseEnrollment />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_COURSES}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <StudentCourseDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Courses */}
+                    <Route
+                      path={ROUTES.STUDENT_COURSES}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <MyCourses />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_COURSES}/enroll`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <CourseEnrollment />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_COURSES}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <StudentCourseDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Attendance */}
-                <Route
-                  path={ROUTES.STUDENT_ATTENDANCE}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <MyAttendance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_ATTENDANCE}/report`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <StudentAttendanceReport />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Attendance */}
+                    <Route
+                      path={ROUTES.STUDENT_ATTENDANCE}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <MyAttendance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_ATTENDANCE}/report`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <StudentAttendanceReport />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Results */}
-                <Route
-                  path={ROUTES.STUDENT_RESULTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <MyResults />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_RESULTS}/analysis`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <ResultsAnalysis />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_RESULTS}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <ExamResultDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Results */}
+                    <Route
+                      path={ROUTES.STUDENT_RESULTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <MyResults />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_RESULTS}/analysis`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <ResultsAnalysis />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_RESULTS}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <ExamResultDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Sports */}
-                <Route
-                  path={ROUTES.STUDENT_SPORTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <MySports />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_SPORTS}/join`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <JoinSport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_SPORTS}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <StudentSportDetail />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Sports */}
+                    <Route
+                      path={ROUTES.STUDENT_SPORTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <MySports />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_SPORTS}/join`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <JoinSport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_SPORTS}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <StudentSportDetail />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Library */}
-                <Route
-                  path={ROUTES.STUDENT_LIBRARY}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <BookCatalog />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_LIBRARY}/my-books`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <MyBooks />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_LIBRARY}/request`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <BookRequest />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Library */}
+                    <Route
+                      path={ROUTES.STUDENT_LIBRARY}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <BookCatalog />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_LIBRARY}/my-books`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <MyBooks />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_LIBRARY}/request`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <BookRequest />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Student Profile */}
-                <Route
-                  path={ROUTES.STUDENT_PROFILE}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <EditProfile />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_PROFILE}/password`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <ChangePassword />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.STUDENT_PROFILE}/notifications`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-                      <NotificationSettings />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Student Profile */}
+                    <Route
+                      path={ROUTES.STUDENT_PROFILE}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <EditProfile />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_PROFILE}/password`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <ChangePassword />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.STUDENT_PROFILE}/notifications`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+                          <NotificationSettings />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Teacher Routes */}
-                <Route
-                  path={ROUTES.TEACHER_DASHBOARD}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <TeacherDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Teacher Routes */}
+                    <Route
+                      path={ROUTES.TEACHER_DASHBOARD}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <TeacherDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Teacher Classes */}
-                <Route
-                  path={ROUTES.TEACHER_CLASSES}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <MyClasses />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_CLASSES}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <ClassDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_CLASSES}/:id/statistics`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <ClassStatistics />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Teacher Classes */}
+                    <Route
+                      path={ROUTES.TEACHER_CLASSES}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <MyClasses />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_CLASSES}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <ClassDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_CLASSES}/:id/statistics`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <ClassStatistics />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Teacher Attendance */}
-                <Route
-                  path={ROUTES.TEACHER_ATTENDANCE}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <TeacherMarkAttendance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_ATTENDANCE}/report`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <TeacherAttendanceReport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_ATTENDANCE}/student/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <StudentAttendanceHistory />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Teacher Attendance */}
+                    <Route
+                      path={ROUTES.TEACHER_ATTENDANCE}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <TeacherMarkAttendance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_ATTENDANCE}/report`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <TeacherAttendanceReport />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_ATTENDANCE}/student/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <StudentAttendanceHistory />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Teacher Results */}
-                <Route
-                  path={ROUTES.TEACHER_RESULTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <TeacherEnterResults />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_RESULTS}/summary`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <ResultsSummary />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Teacher Results */}
+                    <Route
+                      path={ROUTES.TEACHER_RESULTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <TeacherEnterResults />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_RESULTS}/summary`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <ResultsSummary />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Teacher Progress */}
-                <Route
-                  path={`${ROUTES.TEACHER_CLASSES}/performance`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <ClassPerformance />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.TEACHER_CLASSES}/student/:id/progress`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
-                      <StudentProgress />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Teacher Progress */}
+                    <Route
+                      path={`${ROUTES.TEACHER_CLASSES}/performance`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <ClassPerformance />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.TEACHER_CLASSES}/student/:id/progress`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+                          <StudentProgress />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Coach Routes */}
-                <Route
-                  path={ROUTES.COACH_DASHBOARD}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <CoachDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Coach Routes */}
+                    <Route
+                      path={ROUTES.COACH_DASHBOARD}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <CoachDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Coach Sports */}
-                <Route
-                  path={ROUTES.COACH_SPORTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <CoachMySports />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_SPORTS}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <CoachSportDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_SPORTS}/:id/statistics`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <SportStatistics />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Coach Sports */}
+                    <Route
+                      path={ROUTES.COACH_SPORTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <CoachMySports />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_SPORTS}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <CoachSportDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_SPORTS}/:id/statistics`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <SportStatistics />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Coach Participants */}
-                <Route
-                  path={ROUTES.COACH_PARTICIPANTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <ParticipantsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_PARTICIPANTS}/add`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <AddParticipant />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_PARTICIPANTS}/:id`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <ParticipantPerformance />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Coach Participants */}
+                    <Route
+                      path={ROUTES.COACH_PARTICIPANTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <ParticipantsList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_PARTICIPANTS}/add`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <AddParticipant />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_PARTICIPANTS}/:id`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <ParticipantPerformance />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Coach Events */}
-                <Route
-                  path={ROUTES.COACH_EVENTS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <EventsList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_EVENTS}/create`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <CreateEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.COACH_EVENTS}/:id/results`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <EventResults />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Coach Events */}
+                    <Route
+                      path={ROUTES.COACH_EVENTS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <EventsList />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_EVENTS}/create`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <CreateEvent />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.COACH_EVENTS}/:id/results`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <EventResults />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Coach Performance */}
-                <Route
-                  path={ROUTES.COACH_PERFORMANCE}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.COACH]}>
-                      <PerformanceTracking />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Coach Performance */}
+                    <Route
+                      path={ROUTES.COACH_PERFORMANCE}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.COACH]}>
+                          <PerformanceTracking />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Librarian Routes */}
-                <Route
-                  path={ROUTES.LIBRARIAN_DASHBOARD}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <LibrarianDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Librarian Routes */}
+                    <Route
+                      path={ROUTES.LIBRARIAN_DASHBOARD}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <LibrarianDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Librarian Books */}
-                <Route
-                  path={ROUTES.LIBRARIAN_BOOKS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <LibrarianBookCatalog />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.LIBRARIAN_BOOKS}/add`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <AddEditBook />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${ROUTES.LIBRARIAN_BOOKS}/edit/:bookId`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <AddEditBook />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Librarian Books */}
+                    <Route
+                      path={ROUTES.LIBRARIAN_BOOKS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <LibrarianBookCatalog />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.LIBRARIAN_BOOKS}/add`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <AddEditBook />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={`${ROUTES.LIBRARIAN_BOOKS}/edit/:bookId`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <AddEditBook />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Librarian Transactions */}
-                <Route
-                  path={ROUTES.LIBRARIAN_ISSUE}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <IssueReturnBooks />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTES.LIBRARIAN_TRANSACTIONS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <TransactionHistory />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Librarian Transactions */}
+                    <Route
+                      path={ROUTES.LIBRARIAN_ISSUE}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <IssueReturnBooks />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.LIBRARIAN_TRANSACTIONS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <TransactionHistory />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Librarian Members */}
-                <Route
-                  path={`${ROUTES.LIBRARIAN_DASHBOARD}/members`}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <LibraryMembers />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Librarian Members */}
+                    <Route
+                      path={`${ROUTES.LIBRARIAN_DASHBOARD}/members`}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <LibraryMembers />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Librarian Analytics */}
-                <Route
-                  path={ROUTES.LIBRARIAN_STATS}
-                  element={
-                    <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
-                      <LibraryAnalytics />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Librarian Analytics */}
+                    <Route
+                      path={ROUTES.LIBRARIAN_STATS}
+                      element={
+                        <ProtectedRoute allowedRoles={[ROLES.LIBRARIAN]}>
+                          <LibraryAnalytics />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Fallback Route */}
-                <Route
-                  path="*"
-                  element={<Navigate to={ROUTES.HOME} replace />}
-                />
-              </Routes>
-            </React.Suspense>
-          </NotificationProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+                    {/* Fallback Route - 404 */}
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="/401" element={<Unauthorized />} />
+                    <Route path="/500" element={<ServerError />} />
+                    <Route path="/offline" element={<Offline />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </React.Suspense>
+              </NotificationProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+      </ErrorBoundary>
+
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
+    </HelmetProvider>
   );
 }
 

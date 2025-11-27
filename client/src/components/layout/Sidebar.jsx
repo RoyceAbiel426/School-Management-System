@@ -16,6 +16,12 @@ import { NavLink } from "react-router-dom";
 /**
  * Sidebar Component
  * Navigation sidebar for dashboard layouts
+ * Phase 4.3 - Enhanced with accessibility features
+ *
+ * WCAG 2.1 Compliance:
+ * - Navigation landmarks (SC 2.4.1)
+ * - ARIA current (SC 4.1.2)
+ * - Keyboard accessible (SC 2.1.1)
  */
 const Sidebar = ({ role = "admin" }) => {
   // Navigation items based on role
@@ -96,12 +102,19 @@ const Sidebar = ({ role = "admin" }) => {
   const navigationItems = getNavigationItems();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <aside
+      className="w-64 bg-white border-r border-gray-200 min-h-screen"
+      role="complementary"
+      aria-label="Sidebar navigation"
+    >
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-200">
-          <div className="h-10 w-10 rounded-lg bg-primary-600 flex items-center justify-center">
-            <GraduationCap className="h-6 w-6 text-white" />
+          <div
+            className="h-10 w-10 rounded-lg bg-primary-600 flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <GraduationCap className="h-6 w-6 text-white" aria-hidden="true" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-gray-900">Edu-Pro</h2>
@@ -110,7 +123,10 @@ const Sidebar = ({ role = "admin" }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav
+          className="flex-1 px-4 py-6 space-y-1 overflow-y-auto"
+          aria-label="Main navigation"
+        >
           {navigationItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -118,14 +134,15 @@ const Sidebar = ({ role = "admin" }) => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                     isActive
                       ? "bg-primary-50 text-primary-700"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`
                 }
+                aria-current={({ isActive }) => (isActive ? "page" : undefined)}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-5 w-5" aria-hidden="true" />
                 <span>{item.name}</span>
               </NavLink>
             );

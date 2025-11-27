@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import api from "../utils/axiosInstance"; // Custom Axios instance
+import api from "../utils/axiosInstance"; // Import custom Axios instance
 
 const StudentRegister = () => {
   const {

@@ -1,10 +1,58 @@
 import { GraduationCap, Settings, Shield, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import OpenGraph from "../components/seo/OpenGraph";
+import SEO from "../components/seo/SEO";
+import StructuredData from "../components/seo/StructuredData";
+import TwitterCard from "../components/seo/TwitterCard";
 import { ROUTES } from "../constants/routes";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* SEO Meta Tags */}
+      <SEO
+        title="Home"
+        description="Comprehensive Learning Management System for schools. Manage students, teachers, courses, attendance, exams, library, and sports activities all in one platform."
+        keywords="school management system, LMS, learning management, education software, student management, teacher management, attendance system, exam management"
+        canonical="/"
+      />
+
+      <OpenGraph
+        title="Edu-Pro - School Management System"
+        description="Comprehensive Learning Management System for schools. Manage students, teachers, courses, attendance, exams, library, and sports activities."
+        image="/images/og-home.jpg"
+        url="/"
+        type="website"
+      />
+
+      <TwitterCard
+        card="summary_large_image"
+        title="Edu-Pro - School Management System"
+        description="Comprehensive Learning Management System for schools"
+        image="/images/twitter-home.jpg"
+      />
+
+      <StructuredData
+        type="website"
+        data={{
+          name: "Edu-Pro LMS",
+          url: "https://edupro.com",
+        }}
+      />
+
+      <StructuredData
+        type="organization"
+        data={{
+          name: "Edu-Pro",
+          description: "Leading School Management System provider",
+          socialProfiles: [
+            "https://twitter.com/edupro",
+            "https://facebook.com/edupro",
+            "https://linkedin.com/company/edupro",
+          ],
+        }}
+      />
+
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

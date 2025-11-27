@@ -1,6 +1,7 @@
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SEO from "../components/seo/SEO";
 import { ROUTES } from "../constants/routes";
 import { useAuthContext } from "../context/AuthContext";
 import api from "../utils/axiosInstance";
@@ -48,6 +49,13 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <SEO
+        title="Admin Login"
+        description="Login to Edu-Pro LMS admin dashboard"
+        robots="noindex, nofollow"
+        canonical="/admin/login"
+      />
+
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">

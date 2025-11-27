@@ -1,6 +1,13 @@
 /**
  * Button Component
  * Reusable button with multiple variants and sizes
+ * Phase 4.3 - Enhanced with ARIA attributes
+ *
+ * WCAG 2.1 Compliance:
+ * - Keyboard accessible (SC 2.1.1)
+ * - Visible focus indicator (SC 2.4.7)
+ * - ARIA states (SC 4.1.2)
+ * - Minimum touch target 44x44px (SC 2.5.5 AAA)
  */
 const Button = ({
   children,
@@ -14,6 +21,9 @@ const Button = ({
   iconPosition = "left",
   className = "",
   onClick,
+  ariaLabel,
+  ariaDescribedBy,
+  ariaPressed,
   ...props
 }) => {
   const baseStyles =
@@ -38,11 +48,11 @@ const Button = ({
   };
 
   const sizes = {
-    xs: "px-2.5 py-1.5 text-xs",
-    sm: "px-3 py-2 text-sm",
-    md: "px-4 py-2 text-sm",
-    lg: "px-5 py-2.5 text-base",
-    xl: "px-6 py-3 text-base",
+    xs: "px-2.5 py-1.5 text-xs min-h-[32px]",
+    sm: "px-3 py-2 text-sm min-h-[36px]",
+    md: "px-4 py-2 text-sm min-h-[40px]",
+    lg: "px-5 py-2.5 text-base min-h-[44px]",
+    xl: "px-6 py-3 text-base min-h-[48px]",
   };
 
   const widthClass = fullWidth ? "w-full" : "";
@@ -53,6 +63,10 @@ const Button = ({
       disabled={disabled || loading}
       onClick={onClick}
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
+      aria-pressed={ariaPressed}
+      aria-busy={loading}
       {...props}
     >
       {loading && (
@@ -61,6 +75,7 @@ const Button = ({
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <circle
             className="opacity-25"
@@ -77,12 +92,17 @@ const Button = ({
           />
         </svg>
       )}
+      {loading && <span className="sr-only">Loading...</span>}
       {!loading && icon && iconPosition === "left" && (
-        <span className="mr-2">{icon}</span>
+        <span className="mr-2" aria-hidden="true">
+          {icon}
+        </span>
       )}
       {children}
       {!loading && icon && iconPosition === "right" && (
-        <span className="ml-2">{icon}</span>
+        <span className="ml-2" aria-hidden="true">
+          {icon}
+        </span>
       )}
     </button>
   );

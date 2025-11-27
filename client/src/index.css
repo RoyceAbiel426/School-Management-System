@@ -1,3 +1,245 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================
+   Accessibility Styles - Phase 4.3
+   WCAG 2.1 AA Compliance
+   ============================================ */
+
+/* Screen Reader Only Class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Screen Reader Only - Focusable */
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Not Screen Reader Only (for skip links) */
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Focus Visible Styles (keyboard focus only) */
+*:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline on mouse click */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High Contrast Focus for Critical Elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Focus Within (for containers with focused children) */
+.focus-within\:ring:focus-within {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.5);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  * {
+    border-width: 2px;
+  }
+
+  button,
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* Dark Mode Adjustments for Accessibility */
+@media (prefers-color-scheme: dark) {
+  *:focus-visible {
+    outline-color: #60a5fa;
+  }
+}
+
+/* Keyboard Navigation Indicator */
+.keyboard-user *:focus {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Skip Link Styles */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ARIA Live Region Styles */
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+[role="alert"] {
+  /* Keep alerts visible */
+  position: static;
+  width: auto;
+  height: auto;
+}
+
+/* Disabled Element Styles */
+[disabled],
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Required Field Indicator */
+.required::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* Error Message Styles */
+[role="alert"],
+.error-message {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Success Message Styles */
+.success-message {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* Focus Trap Overlay */
+.focus-trap-active {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Accessible Link Styles */
+a:not([class]) {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+a:not([class]):hover {
+  color: #1d4ed8;
+}
+
+a:not([class]):focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Accessible Button Styles */
+button:not([class]) {
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+}
+
+button:not([class]):hover {
+  background: #1d4ed8;
+}
+
+button:not([class]):disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Print Accessibility */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+}
+
+/* Color Contrast Helpers */
+.text-contrast-high {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.text-contrast-high-dark {
+  color: #ffffff;
+  background-color: #000000;
+}
+
+/* Touch Target Size (minimum 44x44px for WCAG 2.1 AAA) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

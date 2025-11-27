@@ -1,0 +1,45 @@
+# Edu-Pro LMS - Robots.txt
+# Controls search engine crawler access
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /student/dashboard
+Disallow: /teacher/dashboard
+Disallow: /coach/dashboard
+Disallow: /librarian/dashboard
+Disallow: /api/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /student/dashboard
+Disallow: /teacher/dashboard
+Disallow: /coach/dashboard
+Disallow: /librarian/dashboard
+Disallow: /api/
+
+# All other crawlers
+User-agent: *
+Allow: /
+
+# Disallow all admin and dashboard pages
+Disallow: /admin/
+Disallow: /student/dashboard
+Disallow: /teacher/dashboard
+Disallow: /coach/dashboard
+Disallow: /librarian/dashboard
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Disallow error pages
+Disallow: /404
+Disallow: /401
+Disallow: /500
+Disallow: /offline
+
+# Sitemap location
+Sitemap: https://edupro.com/sitemap.xml
