@@ -296,22 +296,15 @@ const isCriticalError = (error) => {
  */
 const showErrorNotification = (title, message, options = {}) => {
   if (typeof toast !== "undefined") {
-    toast.error(
-      <div>
-        <strong>{title}</strong>
-        <br />
-        {message}
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        ...options,
-      }
-    );
+    toast.error(`${title}: ${message}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      ...options,
+    });
   } else {
     console.error(`${title}: ${message}`);
   }
@@ -322,22 +315,15 @@ const showErrorNotification = (title, message, options = {}) => {
  */
 const showSuccessNotification = (title, message, options = {}) => {
   if (typeof toast !== "undefined") {
-    toast.success(
-      <div>
-        <strong>{title}</strong>
-        <br />
-        {message}
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        ...options,
-      }
-    );
+    toast.success(`${title}: ${message}`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      ...options,
+    });
   } else {
     console.log(`${title}: ${message}`);
   }

@@ -59,31 +59,31 @@ router.get(
   "/students",
   adminAuth,
   checkPermission("students", "view"),
-  getAllStudents
+  getAllStudents,
 );
 router.get(
   "/students/:id",
   adminAuth,
   checkPermission("students", "view"),
-  getStudentById
+  getStudentById,
 );
 router.post(
   "/students",
   adminAuth,
   checkPermission("students", "create"),
-  createStudent
+  createStudent,
 );
 router.put(
   "/students/:id",
   adminAuth,
   checkPermission("students", "edit"),
-  updateStudent
+  updateStudent,
 );
 router.delete(
   "/students/:id",
   adminAuth,
   checkPermission("students", "delete"),
-  deleteStudent
+  deleteStudent,
 );
 
 // Courses Routes
@@ -91,25 +91,25 @@ router.get(
   "/courses",
   adminAuth,
   checkPermission("courses", "view"),
-  getAllCourses
+  getAllCourses,
 );
 router.post(
   "/courses",
   adminAuth,
   checkPermission("courses", "create"),
-  createCourse
+  createCourse,
 );
 router.put(
   "/courses/:id",
   adminAuth,
   checkPermission("courses", "edit"),
-  updateCourse
+  updateCourse,
 );
 router.delete(
   "/courses/:id",
   adminAuth,
   checkPermission("courses", "delete"),
-  deleteCourse
+  deleteCourse,
 );
 
 // Sports Routes
@@ -117,25 +117,25 @@ router.get(
   "/sports",
   adminAuth,
   checkPermission("sports", "view"),
-  getAllSports
+  getAllSports,
 );
 router.post(
   "/sports",
   adminAuth,
   checkPermission("sports", "create"),
-  createSport
+  createSport,
 );
 router.put(
   "/sports/:id",
   adminAuth,
   checkPermission("sports", "edit"),
-  updateSport
+  updateSport,
 );
 router.delete(
   "/sports/:id",
   adminAuth,
   checkPermission("sports", "delete"),
-  deleteSport
+  deleteSport,
 );
 
 // Library Routes
@@ -143,25 +143,25 @@ router.get(
   "/books",
   adminAuth,
   checkPermission("library", "view"),
-  getAllBooks
+  getAllBooks,
 );
 router.post(
   "/books",
   adminAuth,
   checkPermission("library", "create"),
-  createBook
+  createBook,
 );
 router.put(
   "/books/:id",
   adminAuth,
   checkPermission("library", "edit"),
-  updateBook
+  updateBook,
 );
 router.delete(
   "/books/:id",
   adminAuth,
   checkPermission("library", "delete"),
-  deleteBook
+  deleteBook,
 );
 
 // Attendance Routes
@@ -169,25 +169,25 @@ router.get(
   "/attendance",
   adminAuth,
   checkPermission("attendance", "view"),
-  getAllAttendance
+  getAllAttendance,
 );
 router.post(
   "/attendance",
   adminAuth,
   checkPermission("attendance", "create"),
-  createAttendance
+  createAttendance,
 );
 router.put(
   "/attendance/:id",
   adminAuth,
   checkPermission("attendance", "edit"),
-  updateAttendance
+  updateAttendance,
 );
 router.delete(
   "/attendance/:id",
   adminAuth,
   checkPermission("attendance", "delete"),
-  deleteAttendance
+  deleteAttendance,
 );
 
 // Results Routes
@@ -195,25 +195,25 @@ router.get(
   "/results",
   adminAuth,
   checkPermission("results", "view"),
-  getAllResults
+  getAllResults,
 );
 router.post(
   "/results",
   adminAuth,
   checkPermission("results", "create"),
-  createResult
+  createResult,
 );
 router.put(
   "/results/:id",
   adminAuth,
   checkPermission("results", "edit"),
-  updateResult
+  updateResult,
 );
 router.delete(
   "/results/:id",
   adminAuth,
   checkPermission("results", "delete"),
-  deleteResult
+  deleteResult,
 );
 
 // Coaches Routes
@@ -221,25 +221,25 @@ router.get(
   "/coaches",
   adminAuth,
   checkPermission("coaches", "view"),
-  getAllCoaches
+  getAllCoaches,
 );
 router.post(
   "/coaches",
   adminAuth,
   checkPermission("coaches", "create"),
-  createCoach
+  createCoach,
 );
 router.put(
   "/coaches/:id",
   adminAuth,
   checkPermission("coaches", "edit"),
-  updateCoach
+  updateCoach,
 );
 router.delete(
   "/coaches/:id",
   adminAuth,
   checkPermission("coaches", "delete"),
-  deleteCoach
+  deleteCoach,
 );
 
 export default router;

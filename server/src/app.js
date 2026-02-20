@@ -95,6 +95,34 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/api/v1", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API v1 is running",
+    version: "v1",
+    endpoints: {
+      auth: "/api/v1/auth",
+      admin: "/api/v1/admin",
+      students: "/api/v1/students",
+      teachers: "/api/v1/teachers",
+      classgroups: "/api/v1/classgroups",
+      notices: "/api/v1/notices",
+      complaints: "/api/v1/complaints",
+      modules: "/api/v1/modules",
+      library: "/api/v1/library",
+    },
+  });
+});
+
+app.get("/api/v1/docs", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API documentation endpoint",
+    note: "Refer to project docs for full request/response schemas.",
+    docsPath: "/Docs/API.md",
+  });
+});
+
 // =====================
 // API Routes (v1)
 // =====================
