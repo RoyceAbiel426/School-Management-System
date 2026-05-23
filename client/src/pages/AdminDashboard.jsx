@@ -45,10 +45,77 @@ const AdminDashboard = () => {
   const [modalType, setModalType] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [showReportBuilder, setShowReportBuilder] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [schoolProfile, setSchoolProfile] = useState({
+    schoolName: "",
+    schoolType: "mixed",
+    address: "",
+    contactNumber: "",
+    schoolEmail: "",
+    establishedYear: new Date().getFullYear(),
+  });
+  const [adminProfile, setAdminProfile] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    role: "",
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsError, setSettingsError] = useState("");
+  const [settingsTab, setSettingsTab] = useState("admin");
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  const fetchSchoolProfile = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) return;
+
+      const response = await api.get("/admin/school/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.data) {
+        setSchoolProfile({
+          schoolName: response.data.data.schoolName || "",
+          schoolType: response.data.data.schoolType || "mixed",
+          address: response.data.data.address || "",
+          contactNumber: response.data.data.contactNumber || "",
+          schoolEmail: response.data.data.schoolEmail || "",
+          establishedYear:
+            response.data.data.establishedYear || new Date().getFullYear(),
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching school profile:", err);
+      setSettingsError("Failed to load school profile");
+    }
+  };
+
+  const fetchAdminProfile = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) return;
+
+      const response = await api.get("/admin/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.data) {
+        setAdminProfile({
+          name: response.data.data.name || "",
+          email: response.data.data.email || "",
+          contact: response.data.data.contact || "",
+          role: response.data.data.role || "",
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching admin profile:", err);
+      setSettingsError("Failed to load admin profile");
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -120,6 +187,101 @@ const AdminDashboard = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminData");
     window.location.href = "/login";
+  };
+
+  const openSettings = async () => {
+    setShowSettings(true);
+    setSettingsTab("admin");
+    setSettingsError("");
+    await fetchAdminProfile();
+    await fetchSchoolProfile();
+  };
+
+  const closeSettings = () => {
+    setShowSettings(false);
+    setSettingsError("");
+  };
+
+  const handleSettingsChange = (field, value) => {
+    if (settingsTab === "admin") {
+      setAdminProfile((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    } else {
+      setSchoolProfile((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
+  };
+
+  const saveSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      setSettingsError("");
+
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        setSettingsError("Authentication token not found");
+        return;
+      }
+
+      if (settingsTab === "admin") {
+        // Save admin profile
+        const response = await api.put("/admin/profile", adminProfile, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          closeSettings();
+          fetchDashboardData();
+        }
+      } else {
+        // Try to update school profile first
+        try {
+          const response = await api.put(
+            "/admin/school/profile",
+            schoolProfile,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+
+          if (response.status === 200 || response.status === 201) {
+            closeSettings();
+            fetchDashboardData();
+          }
+        } catch (err) {
+          if (err.response?.status === 404) {
+            // If profile doesn't exist, create it
+            try {
+              const token = localStorage.getItem("adminToken");
+              await api.post("/admin/school/profile", schoolProfile, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              closeSettings();
+              fetchDashboardData();
+            } catch (createErr) {
+              setSettingsError(
+                createErr.response?.data?.message ||
+                  "Failed to create school profile",
+              );
+            }
+          } else {
+            setSettingsError(
+              err.response?.data?.message || "Failed to save settings",
+            );
+          }
+        }
+      }
+    } catch (err) {
+      setSettingsError(
+        err.response?.data?.message || "Failed to save settings",
+      );
+    } finally {
+      setSettingsLoading(false);
+    }
   };
 
   const openModal = (type, item = null) => {
@@ -1007,12 +1169,17 @@ const AdminDashboard = () => {
                   console.log("Notification clicked:", notif)
                 }
               />
-              <button className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={openSettings}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-full transition"
+                title="Settings"
+              >
                 <Settings className="h-5 w-5" />
               </button>
               <button
                 onClick={handleLogout}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-full transition"
+                title="Logout"
               >
                 <LogOut className="h-5 w-5" />
               </button>
@@ -1058,8 +1225,8 @@ const AdminDashboard = () => {
                 {modalType.includes("add")
                   ? "Add New"
                   : modalType.includes("edit")
-                  ? "Edit"
-                  : "Delete"}{" "}
+                    ? "Edit"
+                    : "Delete"}{" "}
                 {modalType.split("-")[1]}
               </h3>
               <p className="text-sm text-gray-500 mb-4">
@@ -1099,6 +1266,252 @@ const AdminDashboard = () => {
         isOpen={showReportBuilder}
         onClose={() => setShowReportBuilder(false)}
       />
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Settings</h3>
+              <button
+                onClick={closeSettings}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Settings Tabs */}
+            <div className="flex border-b border-gray-200 mb-4">
+              <button
+                onClick={() => {
+                  setSettingsTab("admin");
+                  setSettingsError("");
+                }}
+                className={`px-4 py-2 font-medium text-sm ${
+                  settingsTab === "admin"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Admin Profile
+              </button>
+              <button
+                onClick={() => {
+                  setSettingsTab("school");
+                  setSettingsError("");
+                }}
+                className={`px-4 py-2 font-medium text-sm ${
+                  settingsTab === "school"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                School Profile
+              </button>
+            </div>
+
+            {settingsError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {settingsError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {settingsTab === "admin" ? (
+                <>
+                  {/* Admin Profile Fields */}
+
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={adminProfile.name}
+                      onChange={(e) =>
+                        handleSettingsChange("name", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={adminProfile.email}
+                      onChange={(e) =>
+                        handleSettingsChange("email", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+
+                  {/* Contact */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Contact Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={adminProfile.contact}
+                      onChange={(e) =>
+                        handleSettingsChange("contact", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="+94 77 0000 000"
+                    />
+                  </div>
+
+                  {/* Role (Read-only) */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Role
+                    </label>
+                    <input
+                      type="text"
+                      value={adminProfile.role || "Principal"}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* School Profile Fields */}
+
+                  {/* School Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      School Name
+                    </label>
+                    <input
+                      type="text"
+                      value={schoolProfile.schoolName}
+                      onChange={(e) =>
+                        handleSettingsChange("schoolName", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter school name"
+                    />
+                  </div>
+
+                  {/* School Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      School Type
+                    </label>
+                    <select
+                      value={schoolProfile.schoolType}
+                      onChange={(e) =>
+                        handleSettingsChange("schoolType", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="boys">Boys</option>
+                      <option value="girls">Girls</option>
+                      <option value="mixed">Mixed</option>
+                    </select>
+                  </div>
+
+                  {/* Address */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      value={schoolProfile.address}
+                      onChange={(e) =>
+                        handleSettingsChange("address", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter school address"
+                    />
+                  </div>
+
+                  {/* Contact Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Contact Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={schoolProfile.contactNumber}
+                      onChange={(e) =>
+                        handleSettingsChange("contactNumber", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="+94 77 0000 000"
+                    />
+                  </div>
+
+                  {/* School Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      School Email
+                    </label>
+                    <input
+                      type="email"
+                      value={schoolProfile.schoolEmail}
+                      onChange={(e) =>
+                        handleSettingsChange("schoolEmail", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="school@example.com"
+                    />
+                  </div>
+
+                  {/* Established Year */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Established Year
+                    </label>
+                    <input
+                      type="number"
+                      value={schoolProfile.establishedYear}
+                      onChange={(e) =>
+                        handleSettingsChange(
+                          "establishedYear",
+                          parseInt(e.target.value),
+                        )
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={new Date().getFullYear()}
+                      min="1800"
+                      max={new Date().getFullYear()}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={closeSettings}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveSettings}
+                disabled={settingsLoading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {settingsLoading ? "Saving..." : "Save Settings"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

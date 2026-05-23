@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 import rateLimiter from "./middlewares/rateLimiter.js";
 
@@ -32,7 +34,7 @@ app.use(
         imgSrc: ["'self'", "data:", "https:"],
       },
     },
-  })
+  }),
 );
 
 // =====================
@@ -47,7 +49,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 
 // =====================
@@ -74,6 +76,32 @@ if (process.env.NODE_ENV === "development") {
 // =====================
 // Health Check & Root Endpoints
 // =====================
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     tags: [System]
+ *     summary: Health check
+ *     description: Returns service health information.
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                 environment:
+ *                   type: string
+ */
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "OK",
@@ -83,6 +111,16 @@ app.get("/health", (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     tags: [System]
+ *     summary: API root metadata
+ *     responses:
+ *       200:
+ *         description: API metadata
+ */
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Edu-Pro School Management System API",
@@ -90,11 +128,21 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/health",
       api: "/api/v1",
-      documentation: "/api/v1/docs",
+      documentation: "/api-docs",
     },
   });
 });
 
+/**
+ * @openapi
+ * /api/v1:
+ *   get:
+ *     tags: [System]
+ *     summary: API v1 index
+ *     responses:
+ *       200:
+ *         description: v1 endpoint map
+ */
 app.get("/api/v1", (req, res) => {
   res.status(200).json({
     success: true,
@@ -114,14 +162,52 @@ app.get("/api/v1", (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * /api/v1/docs:
+ *   get:
+ *     tags: [System]
+ *     summary: Legacy docs metadata endpoint
+ *     description: Returns pointers to documentation. Interactive docs are served at /api-docs.
+ *     responses:
+ *       200:
+ *         description: Documentation metadata
+ */
 app.get("/api/v1/docs", (req, res) => {
   res.status(200).json({
     success: true,
     message: "API documentation endpoint",
     note: "Refer to project docs for full request/response schemas.",
-    docsPath: "/Docs/API.md",
+    docsPath: "/api-docs",
   });
 });
+
+// Suppress browser favicon requests from hitting the global 404 handler.
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
+
+// Suppress Socket.IO polling probe requests when Socket.IO server is not enabled.
+app.use("/socket.io", (req, res) => {
+  res.status(204).end();
+});
+
+app.use(
+  "/api-docs",
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+    },
+  }),
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customSiteTitle: "School Management API Docs",
+  }),
+);
 
 // =====================
 // API Routes (v1)

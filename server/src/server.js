@@ -11,7 +11,7 @@ const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length) {
   console.error(
-    `❌ Missing required environment variables: ${missingVars.join(", ")}`
+    `❌ Missing required environment variables: ${missingVars.join(", ")}`,
   );
   process.exit(1);
 }
@@ -48,6 +48,7 @@ connectDB()
       console.log(`📊 Environment: ${process.env.NODE_ENV || "development"}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/health`);
       console.log(`📚 API Base URL: http://localhost:${PORT}/api/v1`);
+      console.log(`📖 Swagger UI: http://localhost:${PORT}/api-docs`);
       console.log("=".repeat(50));
     });
   })

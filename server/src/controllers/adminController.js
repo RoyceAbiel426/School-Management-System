@@ -42,7 +42,7 @@ export const adminLogin = async (req, res) => {
     const token = jwt.sign(
       { id: admin._id, adminID: admin.adminID, role: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
     );
 
     res.json({
@@ -690,6 +690,80 @@ export const deleteCoach = async (req, res) => {
 };
 
 // =====================
+// Admin Profile Management
+// =====================
+
+// Get Admin Profile
+export const getAdminProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id).select(
+      "name email contact contactNumber role",
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        name: admin.name,
+        email: admin.email,
+        contact: admin.contact || admin.contactNumber,
+        role: admin.role,
+      },
+    });
+  } catch (error) {
+    console.error("Get admin profile error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Update Admin Profile
+export const updateAdminProfile = async (req, res) => {
+  try {
+    const { name, email, contact } = req.body;
+    const admin = await Admin.findById(req.user.id);
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Check if email is being changed and if new email already exists
+    if (email && email !== admin.email) {
+      const existingAdmin = await Admin.findOne({ email });
+      if (existingAdmin) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+    }
+
+    // Update fields
+    if (name) admin.name = name;
+    if (email) admin.email = email;
+    if (contact) admin.contactNumber = contact;
+
+    await admin.save();
+
+    res.json({
+      success: true,
+      message: "Admin profile updated successfully",
+      data: {
+        name: admin.name,
+        email: admin.email,
+        contact: admin.contactNumber,
+        role: admin.role,
+      },
+    });
+  } catch (error) {
+    console.error("Update admin profile error:", error);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// =====================
 // School Profile Management
 // =====================
 
@@ -808,7 +882,7 @@ export const updateSchoolProfile = async (req, res) => {
 export const getSchoolProfile = async (req, res) => {
   try {
     const admin = await Admin.findById(req.user.id).select(
-      "schoolID schoolName schoolType address contactNumber schoolEmail establishedYear"
+      "schoolID schoolName schoolType address contactNumber schoolEmail establishedYear",
     );
 
     if (!admin) {
@@ -907,7 +981,7 @@ export const registerAdmin = [
       const token = jwt.sign(
         { id: admin._id, adminID: admin.adminID, role: "admin" },
         process.env.JWT_SECRET,
-        { expiresIn: "24h" }
+        { expiresIn: "24h" },
       );
 
       res.status(201).json({
